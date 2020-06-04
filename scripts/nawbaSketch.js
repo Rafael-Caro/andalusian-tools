@@ -32,7 +32,6 @@ var banshiBoxes = [];
 var scaleCents;
 var scaleDegrees;
 var scaleLines = [];
-var banshiBoxW = 150;
 var banshiBoxH = 30;
 var lyricsBoxes = [];
 var lyricsBoxTop = topExtraSpace+110;
@@ -523,7 +522,7 @@ function CreateLyricsBox (lyrics, i) {
   this.x2 = map(lyrics.end, 0, trackDuration, navigationBox.x1+cursorW/2, navigationBox.x2-cursorW/2);
   this.y1 = navigationBox.y1;
   this.h = navigationBoxH;
-  this.lx1 = headingLeft + banshiBoxW + 10;
+  this.lx1 = headingLeft + 10;
   this.lx2 = width-20;
   this.ly1 = lyricsBoxTop + 20*i;
   this.ly2 = this.ly1+20;
@@ -569,12 +568,16 @@ function CreateLyricsBox (lyrics, i) {
       if (visualization == 'lines') {
         rect(this.lx1, this.ly1+lyricsShift, this.lx2-this.lx1, 20);
       }
-      textAlign(LEFT, BOTTOM);
+      if (lang == 'ar') {
+        textAlign(RIGHT, BOTTOM);
+      } else {
+        textAlign(LEFT, BOTTOM);
+      }
       textStyle(NORMAL);
       textSize(15);
       fill(0);
       if (visualization == 'lines') {
-        text(this.lyrics[lang], this.lx1+10, this.ly1+lyricsShift, this.lx2-this.lx1, 20);
+        text(this.lyrics[lang], this.lx1+10, this.ly1+lyricsShift, this.lx2-this.lx1-20, 20);
       }
     } else {
       this.hidden = true;
@@ -595,94 +598,94 @@ function CreateLyricsBox (lyrics, i) {
   }
 }
 
-function CreateBanshiBox (banshi, i) {
-  this.start = parseFloat(banshi.start);
-  this.x1 = map(this.start, 0, trackDuration, navigationBox.x1+cursorW/2, navigationBox.x2-cursorW/2);
-  this.x2 = map(banshi.end, 0, trackDuration, navigationBox.x1+cursorW/2, navigationBox.x2-cursorW/2);
-  this.y1 = navigationBox.y1;
-  this.h = banshiBoxH;
-  this.bangu = banshi.bangu;
-  this.fill = color(0, 50);
-  this.stroke = color(255, 255, 204, 100);
-  this.txtBack = color(255, 0);
-  this.name = banshi.name;
-  this.nameChinese = banshi.nameChinese;
-  this.banshiLines = []
-  this.banshi2display;
+// function CreateBanshiBox (banshi, i) {
+//   this.start = parseFloat(banshi.start);
+//   this.x1 = map(this.start, 0, trackDuration, navigationBox.x1+cursorW/2, navigationBox.x2-cursorW/2);
+//   this.x2 = map(banshi.end, 0, trackDuration, navigationBox.x1+cursorW/2, navigationBox.x2-cursorW/2);
+//   this.y1 = navigationBox.y1;
+//   this.h = banshiBoxH;
+//   this.bangu = banshi.bangu;
+//   this.fill = color(0, 50);
+//   this.stroke = color(255, 255, 204, 100);
+//   this.txtBack = color(255, 0);
+//   this.name = banshi.name;
+//   this.nameChinese = banshi.nameChinese;
+//   this.banshiLines = []
+//   this.banshi2display;
+//
+//   this.update = function () {
+//     if (cursor.x >= this.x1 && cursor.x < this.x2) {
+//       this.fill = color(255, 255, 0, 75);
+//       this.stroke = color(255, 255, 0, 75);
+//       this.txtBack = color(255, 255, 0, 75);
+//     } else {
+//       this.fill = color(0, 50);
+//       this.stroke = color(255, 255, 204, 100);
+//       this.txtBack = color(255, 0);
+//     }
+//     if (langButton.html() == "عر") {
+//       this.banshi2display = this.name;
+//     } else {
+//       this.banshi2display = this.nameChinese;
+//     }
+//   }
+//
+//   this.display = function () {
+//     fill(this.fill);
+//     // stroke(this.stroke);
+//     stroke(0);
+//     strokeWeight(1);
+//     rect(this.x1, this.y1, this.x2-this.x1, this.h);
+//     var banshiDisplayed = false;
+//     for (var i = 0; i < this.banshiLines.length; i++) {
+//       var banshiLine = this.banshiLines[i];
+//       if (banshiLine.y2+lyricsShift > lyricsBoxTop && banshiLine.y1+lyricsShift < lyricsBoxBottom) {
+//         banshiLine.hidden = false;
+//         noStroke();
+//         fill(this.txtBack);
+//         if (visualization == 'lines') {
+//           rect(banshiLine.x1, banshiLine.y1+lyricsShift, banshiBoxW, 20);
+//         }
+//         if (!banshiDisplayed) {
+//           textAlign(LEFT, BOTTOM);
+//           textStyle(BOLD);
+//           textSize(15);
+//           fill(0);
+//           if (visualization == 'lines') {
+//             text(this.banshi2display, banshiLine.x1+10, banshiLine.y1+lyricsShift, banshiBoxW, 20);
+//           }
+//           banshiDisplayed = true;
+//         }
+//       } else {
+//         banshiLine.hidden = true;
+//       }
+//     }
+//   }
+//
+//   this.clicked = function () {
+//     for (var i = 0; i < this.banshiLines.length; i++) {
+//       var banshiLine = this.banshiLines[i];
+//       if (mouseX > banshiLine.x1 && mouseX < banshiLine.x2 && mouseY > banshiLine.y1+lyricsShift &&
+//           mouseY < banshiLine.y2+lyricsShift && !banshiLine.hidden && visualization == 'lines') {
+//         jump = this.start;
+//         if (playing) {
+//           track.jump(jump);
+//           jump = undefined;
+//         } else {
+//           currentTime = jump;
+//         }
+//       }
+//     }
+//   }
+// }
 
-  this.update = function () {
-    if (cursor.x >= this.x1 && cursor.x < this.x2) {
-      this.fill = color(255, 255, 0, 75);
-      this.stroke = color(255, 255, 0, 75);
-      this.txtBack = color(255, 255, 0, 75);
-    } else {
-      this.fill = color(0, 50);
-      this.stroke = color(255, 255, 204, 100);
-      this.txtBack = color(255, 0);
-    }
-    if (langButton.html() == "عر") {
-      this.banshi2display = this.name;
-    } else {
-      this.banshi2display = this.nameChinese;
-    }
-  }
-
-  this.display = function () {
-    fill(this.fill);
-    // stroke(this.stroke);
-    stroke(0);
-    strokeWeight(1);
-    rect(this.x1, this.y1, this.x2-this.x1, this.h);
-    var banshiDisplayed = false;
-    for (var i = 0; i < this.banshiLines.length; i++) {
-      var banshiLine = this.banshiLines[i];
-      if (banshiLine.y2+lyricsShift > lyricsBoxTop && banshiLine.y1+lyricsShift < lyricsBoxBottom) {
-        banshiLine.hidden = false;
-        noStroke();
-        fill(this.txtBack);
-        if (visualization == 'lines') {
-          rect(banshiLine.x1, banshiLine.y1+lyricsShift, banshiBoxW, 20);
-        }
-        if (!banshiDisplayed) {
-          textAlign(LEFT, BOTTOM);
-          textStyle(BOLD);
-          textSize(15);
-          fill(0);
-          if (visualization == 'lines') {
-            text(this.banshi2display, banshiLine.x1+10, banshiLine.y1+lyricsShift, banshiBoxW, 20);
-          }
-          banshiDisplayed = true;
-        }
-      } else {
-        banshiLine.hidden = true;
-      }
-    }
-  }
-
-  this.clicked = function () {
-    for (var i = 0; i < this.banshiLines.length; i++) {
-      var banshiLine = this.banshiLines[i];
-      if (mouseX > banshiLine.x1 && mouseX < banshiLine.x2 && mouseY > banshiLine.y1+lyricsShift &&
-          mouseY < banshiLine.y2+lyricsShift && !banshiLine.hidden && visualization == 'lines') {
-        jump = this.start;
-        if (playing) {
-          track.jump(jump);
-          jump = undefined;
-        } else {
-          currentTime = jump;
-        }
-      }
-    }
-  }
-}
-
-function CreateBanshiLine (i) {
-  this.x1 = headingLeft + 10;
-  this.x2 = this.x1+banshiBoxW;
-  this.y1 = lyricsBoxTop + 20 * i;
-  this.y2 = this.y1+20;
-  this.hidden;
-}
+// function CreateBanshiLine (i) {
+//   this.x1 = headingLeft + 10;
+//   this.x2 = this.x1+banshiBoxW;
+//   this.y1 = lyricsBoxTop + 20 * i;
+//   this.y2 = this.y1+20;
+//   this.hidden;
+// }
 
 function CreateBpm () {
   this.bpm;
