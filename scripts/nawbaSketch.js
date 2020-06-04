@@ -246,12 +246,12 @@ function draw () {
     for (var i = 0; i < width-headingLeft-30; i++) {
       var x = headingLeft+10+i;
       var y = cents[start+i];
-      var z = louds[start+i]/2;
+      // var z = louds[start+i]/2;
       stroke(205, 92, 92);
       strokeWeight(1);
-      line(x, y-z, x, y+z);
+      line(x, y-1, x, y+2);
     }
-    stroke(255, 255, 0);
+    stroke(165, 214, 167);
     strokeWeight(cursorW);
     var x = headingLeft+10 + (width-headingLeft-30)/2;
     line(x, lyricsBoxTop+cursorW/2, x, lyricsBoxBottom-cursorW/2);
@@ -363,18 +363,20 @@ function start () {
   // var roleType = recording.hangdang.wy;
   // if (roleType == 'laosheng') {
   //   scaleCents = [-1200, -1000, -800, -500, -300, 0, 200, 400, 700, 900, 1200];
+  scaleCents = [-1200, -1000, -800, -500, -300, 0, 200, 400, 700, 900, 1200]
   //   scaleDegrees = [1, 2, 3, 5, 6, 1, 2, 3, 5, 6, 1];
+  scaleDegrees = ['do', 're', 'mi', 'sol', 'la', 'do', 're', 'mi', 'sol', 'la', 'do']
   // } else if (roleType == 'dan') {
   //   scaleCents = [0, 200, 400, 700, 900, 1200, 1400, 1600, 1900];
   //   scaleDegrees = [1, 2, 3, 5, 6, 1, 2, 3, 5];
   // } else {
   //   print("Unknown role type");
   // }
-  // minCent = scaleCents[0]-50;
-  // maxCent = scaleCents[scaleCents.length-1]+50;
-  // for (var i = 0; i < scaleCents.length; i++) {
-  //   scaleLines.push(map(scaleCents[i], minCent, maxCent, lyricsBoxBottom, lyricsBoxTop));
-  // }
+  minCent = scaleCents[0]-50;
+  maxCent = scaleCents[scaleCents.length-1]+50;
+  for (var i = 0; i < scaleCents.length; i++) {
+    scaleLines.push(map(scaleCents[i], minCent, maxCent, lyricsBoxBottom, lyricsBoxTop));
+  }
   // var bpms = [];
   // var banshi = recording.banshi;
   // for (var i = 0; i < banshi.length; i++) {
@@ -756,32 +758,33 @@ function CreateBangu () {
 }
 
 function pitchAndLoudness () {
-  var maxLoud = 0;
+  // var maxLoud = 0;
   for (var i = 0; i < (width-headingLeft-30)/2; i++) {
     cents.push(undefined);
-    louds.push(undefined);
+    // louds.push(undefined);
   }
   for (var i = 0; i < trackDuration*100; i++) {
     var t = i/100;
-    var c = map(pitchTrack[t.toFixed(2)]['c'], minCent, maxCent, lyricsBoxBottom, lyricsBoxTop);
+    // var c = map(pitchTrack[t.toFixed(2)]['c'], minCent, maxCent, lyricsBoxBottom, lyricsBoxTop);
+    var c = map(pitchTrack[t.toFixed(2)], minCent, maxCent, lyricsBoxBottom, lyricsBoxTop);
     if (c > lyricsBoxTop && c < lyricsBoxBottom) {
       cents.push(c);
     } else {
       cents.push(undefined);
     }
-    var l = pitchTrack[t.toFixed(2)]['l'];
-    if (l > maxLoud) {
-      maxLoud = l;
-    }
+    // var l = pitchTrack[t.toFixed(2)]['l'];
+    // if (l > maxLoud) {
+    //   maxLoud = l;
+    // }
   }
-  for (var i = 0; i < trackDuration*100; i++) {
-    var t = i/100;
-    var l = pitchTrack[t.toFixed(2)]['l'];
-    louds.push(map(l, 0, maxLoud, 0, 30));
-  }
+  // for (var i = 0; i < trackDuration*100; i++) {
+  //   var t = i/100;
+  //   var l = pitchTrack[t.toFixed(2)]['l'];
+  //   louds.push(map(l, 0, maxLoud, 0, 30));
+  // }
   for (var i = 0; i < (width-headingLeft-30)/2; i++) {
     cents.push(undefined);
-    louds.push(undefined);
+    // louds.push(undefined);
   }
 }
 
@@ -794,7 +797,7 @@ function audioLoader (mbid) {
   }
   track = loadSound(root + mbid + ".mp3", function () {
     playButton.removeAttribute("disabled");
-    // visButton.removeAttribute("disabled");
+    visButton.removeAttribute("disabled");
     loaded=true;
     currentTime = 0;
     // voiceToggle.removeAttribute("disabled");
