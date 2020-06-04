@@ -14,7 +14,7 @@
       "es": "Orquesta del conservatorio de Tetuán"
     },
     "info": "https://musicbrainz.org/recording/b11237b9-d45b-4b3a-a97b-ab7d198f927f",
-    "duration": 230.14,
+    "duration": 324.85,
     "banshi": [
       {
         "name": "xipi daoban",
@@ -1039,201 +1039,39 @@
     "lyrics": [
       {
         "lyrics": {
-          "zh": "昔日里有个三大贤，",
-          "es": "En la antigüedad había tres grandes sabios,",
-          "en": "In ancient times there were three great sages,"
+          "ar": "وَعَشِيَّةٍ لازِلْتُ أَرْقُبُ وَقْتَهَا",
+          "es": "¡Qué tarde [aquella]! No dejaba yo de esperar su llegada",
+          "en": ""
         },
-        "start": 20.21,
-        "end": 45.87
+        "start": 0,
+        "end": 32.72
       },
       {
         "lyrics": {
-          "zh": "刘关张结义在桃园。",
-          "es": "Liu Bei, Guan Yu y Zhang Fei, que se juraron hermandad en el Jardín de los Melocotoneros.",
-          "en": "Liu Bei, Guan Yu and Zhang Fei, who swore brotherhood in the Peach Garden."
+          "ar": "قَدْ بَشَّرَتْ بِوِصَالِهَا قَلْبِي المُحْرَقِ",
+          "es": "porque anunciaba la unión al corazón encendido.",
+          "en": ""
         },
-        "start": 59.12,
-        "end": 68.2
+        "start": 83.25,
+        "end": 100.41
       },
       {
         "lyrics": {
-          "zh": "弟兄们徐州曾失散，",
-          "es": "Los hermanos se separaron en Xuzhou,",
-          "en": "The brothers separated in Xuzhou,"
+          "ar": "وَالشَّمْسُ مِنْ تَحْتِ السَّحَابِ كَأَنَّهَا",
+          "es": "El sol bajo las nubes semejaba",
+          "en": ""
         },
-        "start": 76.69,
-        "end": 85.22
+        "start": 217.22,
+        "end": 248.94
       },
       {
         "lyrics": {
-          "zh": "古城相逢又团圆。",
-          "es": "pero se reencontraron en Gucheng.",
-          "en": "but they reunited in Gucheng."
+          "ar": "ذَهَبٌ تَقَلَّبَ فِي قَمِيصٍ أَزْرَقِ",
+          "es": "oro bordado en una túnica azul.",
+          "en": ""
         },
-        "start": 94.14,
-        "end": 103.87
-      },
-      {
-        "lyrics": {
-          "zh": "关二爷马上呼三弟，",
-          "es": "Guan Yu, desde su caballo, llamó a su hermano Zhang Fei,",
-          "en": "Guan Yu, on his horse, called his brother Zhang Fei,"
-        },
-        "start": 111.52,
-        "end": 119.08
-      },
-      {
-        "lyrics": {
-          "zh": "张翼德在城楼怒发冲冠。",
-          "es": "pero él, desde la muralla de la ciudad, hervía de ira.",
-          "en": "but he, from the city walls, seethed in anger."
-        },
-        "start": 128.72,
-        "end": 137.88
-      },
-      {
-        "lyrics": {
-          "zh": "耳边厢又听——",
-          "es": "Entonces llega a sus oídos…",
-          "en": "Then to his ears came…"
-        },
-        "start": 145.97,
-        "end": 150.65
-      },
-      {
-        "lyrics": {
-          "zh": "   ——人呐喊，",
-          "es": "      …el clamor de un gentío:",
-          "en": "      …the rallying cry of a multitude:"
-        },
-        "start": 150.65,
-        "end": 153.99
-      },
-      {
-        "lyrics": {
-          "zh": "老蔡阳的人马来到了古城边。",
-          "es": "el ejército de Cai Yang se acercaba a la ciudad.",
-          "en": "Cai Yang's army was approaching the city."
-        },
-        "start": 154.38,
-        "end": 159.04
-      },
-      {
-        "lyrics": {
-          "zh": "城楼上助你三通鼓，",
-          "es": "\"Solo tienes tres toques de tambor\", dijo Zhang Fei.",
-          "en": "\"Three drumrolls will serve you,\" said from the city walls,"
-        },
-        "start": 159.48,
-        "end": 163.31
-      },
-      {
-        "lyrics": {
-          "zh": "十面旌旗壮壮威严。",
-          "es": "mientras las insignias del enemigo se amontonaban ominosas.",
-          "en": "and they were sorrounded by the strength and might of the enemy's banners."
-        },
-        "start": 163.62,
-        "end": 167.04
-      },
-      {
-        "lyrics": {
-          "zh": "哗喇喇打罢了头通鼓，",
-          "es": "\"Hua la la\", primer toque de tambor,",
-          "en": "\"Hua la la,\" sounded the first drumroll,"
-        },
-        "start": 167.53,
-        "end": 171.38
-      },
-      {
-        "lyrics": {
-          "zh": "关二爷提刀跨雕鞍。",
-          "es": "y Guan Yu ya cabalga blandiendo su arma.",
-          "en": "and Guan Yu unsheathed his sword and mounted his horse."
-        },
-        "start": 171.77,
-        "end": 174.35
-      },
-      {
-        "lyrics": {
-          "zh": "哗喇喇打罢了二通鼓，",
-          "es": "\"Hua la la\", segundo toque de tambor,",
-          "en": "\"Hua la la,\" sounded the second drumroll,"
-        },
-        "start": 174.35,
-        "end": 177.45
-      },
-      {
-        "lyrics": {
-          "zh": "人有精神马又欢。",
-          "es": "y hombre y caballo ya rezuman euforia.",
-          "en": "and the man was euphoric and the horse exultant."
-        },
-        "start": 177.93,
-        "end": 180.99
-      },
-      {
-        "lyrics": {
-          "zh": "哗喇喇打罢了三通鼓，",
-          "es": "\"Hua la la\", tercer toque de tambor,",
-          "en": "\"Hua la la,\" sounded the third drumroll,"
-        },
-        "start": 181.3,
-        "end": 184.05
-      },
-      {
-        "lyrics": {
-          "zh": "蔡阳的人头落在马前。",
-          "es": "y la cabeza de Cai Yang ya rueda bajo su caballo.",
-          "en": "and Cai Yang's head dropped in front of the horse."
-        },
-        "start": 184.45,
-        "end": 187.35
-      },
-      {
-        "lyrics": {
-          "zh": "一来是老儿命该丧，",
-          "es": "Así el canalla recibió su merecido,",
-          "en": "Thus the scoundrel ended his life,"
-        },
-        "start": 187.61,
-        "end": 190.18
-      },
-      {
-        "lyrics": {
-          "zh": "二来弟兄得团圆。",
-          "es": "y los hermanos al final se reconciliaron.",
-          "en": "and also the brothers reunited."
-        },
-        "start": 190.46,
-        "end": 193.29
-      },
-      {
-        "lyrics": {
-          "zh": "贤弟休回长安转，",
-          "es": "\"Querido hermano, no vuelvas a Chang'an\", dijo,",
-          "en": "\"Worthy brother, do not return to Chang'an,\" said,"
-        },
-        "start": 193.61,
-        "end": 196.42
-      },
-      {
-        "lyrics": {
-          "zh": "就在这沙陀过几年、",
-          "es": "y aquí en Shatuo pasó varios años,",
-          "en": "and here in Shatuo spent several years,"
-        },
-        "start": 196.42,
-        "end": 203.38
-      },
-      {
-        "lyrics": {
-          "zh": "落得个清闲。",
-          "es": "disfrutando una vida relajada.",
-          "en": "enjoying a relaxed life."
-        },
-        "start": 206.45,
-        "end": 226.66
+        "start": 299.2,
+        "end": 316.22
       }
     ]
   }

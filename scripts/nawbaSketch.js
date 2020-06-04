@@ -208,13 +208,13 @@ function setup () {
 }
 
 function draw () {
-  background(255, 255, 204);
+  background(165, 214, 167);
 
   if (selectMenu.value() != htmls.select[version]) {
     textAlign(CENTER, TOP);
     stroke(0);
     strokeWeight(5);
-    fill(255, 255, 0);
+    fill(76, 175, 80);
     textSize(20);
     textStyle(BOLD);
     text(title, headingX, topExtraSpace+22);
@@ -401,11 +401,11 @@ function start () {
   //   }
   //   tempoCurve.push(tempoCurveChunk);
   // }
-  // var lyrics = recording.lyrics;
-  // for (var i = 0; i < lyrics.length; i++) {
-  //    var lyricsBox = new CreateLyricsBox(lyrics[i], i);
-  //    lyricsBoxes.push(lyricsBox);
-  // }
+  var lyrics = recording.lyrics;
+  for (var i = 0; i < lyrics.length; i++) {
+      var lyricsBox = new CreateLyricsBox(lyrics[i], i);
+      lyricsBoxes.push(lyricsBox);
+  }
 }
 
 // function CreateCredits (recording) {
@@ -501,7 +501,7 @@ function CreateCursor () {
   }
 
   this.display = function () {
-    stroke(255, 255, 0);
+    stroke(165, 214, 167);
     strokeWeight(cursorW);
     line(this.x, navigationBox.y1+cursorW/2, this.x, navigationBox.y2-cursorW/2);
   }
@@ -537,9 +537,9 @@ function CreateLyricsBox (lyrics, i) {
 
   this.update = function () {
     if (cursor.x >= this.x1 && cursor.x < this.x2) {
-      this.fill = color(255, 255, 0, 75);
-      this.stroke = color(255, 255, 0, 75);
-      this.txtBack = color(255, 255, 0, 75);
+      this.fill = color(244, 67, 54, 75);
+      this.stroke = color(244, 67, 54, 75);
+      this.txtBack = color(244, 67, 54, 75);
       if (this.ly1+lyricsShift < lyricsBoxTop) {
         lyricsShift = lyricsBoxTop - this.ly1;
       } else if (this.ly2+lyricsShift > lyricsBoxBottom) {
@@ -791,7 +791,7 @@ function audioLoader (mbid) {
   }
   track = loadSound(root + mbid + ".mp3", function () {
     playButton.removeAttribute("disabled");
-    visButton.removeAttribute("disabled");
+    // visButton.removeAttribute("disabled");
     loaded=true;
     currentTime = 0;
     // voiceToggle.removeAttribute("disabled");
