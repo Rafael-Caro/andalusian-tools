@@ -25,6 +25,7 @@ var accToggle;
 var accSlider;
 var banguToggle;
 var banguSlider;
+var pitchLineSmall;
 var navigationBox;
 var navigationBoxH = 100;
 var tempoCurve = [];
@@ -37,7 +38,7 @@ var lyricsBoxes = [];
 var lyricsBoxTop = topExtraSpace+110;
 var lyricsBoxBottom;
 var lyricsShift = 0;
-var cents = [];
+var pitchLineBig = [];
 var minCent;
 var maxCent;
 var louds = [];
@@ -196,6 +197,7 @@ function setup () {
   // banguToggle.attribute("disabled", "true");
   // banguSlider.attribute("disabled", "true");
 
+  pitchLineSmall = new CreatePitchLineSmall();
   navigationBox = new CreateNavigationBox();
   lyricsBoxBottom = navigationBox.y1-20;
   cursor = new CreateCursor();
@@ -245,7 +247,7 @@ function draw () {
     var start = int(currentTime * 100);
     for (var i = 0; i < width-headingLeft-30; i++) {
       var x = headingLeft+10+i;
-      var y = cents[start+i];
+      var y = pitchLineBig[start+i];
       // var z = louds[start+i]/2;
       stroke(205, 92, 92);
       strokeWeight(1);
@@ -322,8 +324,9 @@ function start () {
   banshiBoxes = [];
   lyricsBoxes = [];
   tempoCurve = [];
-  cents = [];
-  louds = [];
+  pitchLineBig = [];
+  pitchLineSmall.x = [];
+  pitchLineSmall.y = [];
   scaleLines = [];
   playButton.html(htmls.play[version]);
   playButton.attribute("disabled", "true");
@@ -336,7 +339,7 @@ function start () {
   } else {
     root = "files/pitchTracks/"
   }
-  pitchTrack = loadJSON(root + mbid + '-pitchTrack.json', pitchAndLoudness);
+  pitchTrack = loadJSON(root + mbid + '-pitchTrack.json', pitchLine);
 
   langButton.removeAttribute("disabled");
   langButton.html("عر");
@@ -461,6 +464,7 @@ function CreateNavigationBox () {
     //   var x = map(banguList[i], 0, trackDuration, this.x1+cursorW/2, this.x2-cursorW/2);
     //   line(x, this.y1, x, this.y2);
     // }
+    pitchLineSmall.display();
   }
 
   this.displayFront = function () {
@@ -757,20 +761,27 @@ function CreateBangu () {
   }
 }
 
-function pitchAndLoudness () {
+function pitchLine () {
   // var maxLoud = 0;
   for (var i = 0; i < (width-headingLeft-30)/2; i++) {
-    cents.push(undefined);
+    pitchLineBig.push(undefined);
     // louds.push(undefined);
   }
   for (var i = 0; i < trackDuration*100; i++) {
     var t = i/100;
     // var c = map(pitchTrack[t.toFixed(2)]['c'], minCent, maxCent, lyricsBoxBottom, lyricsBoxTop);
-    var c = map(pitchTrack[t.toFixed(2)], minCent, maxCent, lyricsBoxBottom, lyricsBoxTop);
-    if (c > lyricsBoxTop && c < lyricsBoxBottom) {
-      cents.push(c);
+    var c = pitchTrack[t.toFixed(2)];
+    var pointBig = map(c, minCent, maxCent, lyricsBoxBottom, lyricsBoxTop);
+    if (pointBig > lyricsBoxTop && pointBig < lyricsBoxBottom) {
+      pitchLineBig.push(pointBig);
     } else {
-      cents.push(undefined);
+      pitchLineBig.push(undefined);
+    }
+    var pointY = map(c, minCent, maxCent, navigationBox.y2, navigationBox.y1);
+    if (pointY > navigationBox.y1 && pointY < navigationBox.y2) {
+      pitchLineSmall.y.push(pointY);
+      var pointX = map(i, 0, trackDuration*100, navigationBox.x1, navigationBox.x2);
+      pitchLineSmall.x.push(pointX);
     }
     // var l = pitchTrack[t.toFixed(2)]['l'];
     // if (l > maxLoud) {
@@ -783,8 +794,23 @@ function pitchAndLoudness () {
   //   louds.push(map(l, 0, maxLoud, 0, 30));
   // }
   for (var i = 0; i < (width-headingLeft-30)/2; i++) {
-    cents.push(undefined);
+    pitchLineBig.push(undefined);
     // louds.push(undefined);
+  }
+
+  //pitchLine.update();
+}
+
+function CreatePitchLineSmall () {
+  this.x = []
+  this.y = []
+
+  this.display = function () {
+    for (var i = 0; i < pitchLineSmall.x.length; i++) {
+      stroke(205, 92, 92);
+      strokeWeight(1);
+      point(pitchLineSmall.x[i], pitchLineSmall.y[i]);
+    }
   }
 }
 
