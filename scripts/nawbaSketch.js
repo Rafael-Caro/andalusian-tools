@@ -777,10 +777,11 @@ function pitchLine () {
     } else {
       pitchLineBig.push(undefined);
     }
-    var pointY = map(c, minCent, maxCent, navigationBox.y2, navigationBox.y1);
+    var pointY = map(c, minCent, maxCent, navigationBox.y2,
+      navigationBox.y1);
     if (pointY > navigationBox.y1 && pointY < navigationBox.y2) {
       pitchLineSmall.y.push(pointY);
-      var pointX = map(i, 0, trackDuration*100, navigationBox.x1, navigationBox.x2);
+      var pointX = map(i, 0, trackDuration*100, navigationBox.x1+cursorW/2, navigationBox.x2-cursorW/2);
       pitchLineSmall.x.push(pointX);
     }
     // var l = pitchTrack[t.toFixed(2)]['l'];
