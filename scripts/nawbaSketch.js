@@ -363,9 +363,9 @@ function start () {
   // var roleType = recording.hangdang.wy;
   // if (roleType == 'laosheng') {
   //   scaleCents = [-1200, -1000, -800, -500, -300, 0, 200, 400, 700, 900, 1200];
-  scaleCents = [-1200, -1000, -800, -500, -300, 0, 200, 400, 700, 900, 1200]
+  scaleCents = [-1200, -1000, -800, -700, -500, -300, -100, 0, 200, 400, 500, 700, 900, 1100, 1200]
   //   scaleDegrees = [1, 2, 3, 5, 6, 1, 2, 3, 5, 6, 1];
-  scaleDegrees = ['do', 're', 'mi', 'sol', 'la', 'do', 're', 'mi', 'sol', 'la', 'do']
+  scaleDegrees = ['do', 're', 'mi', 'fa', 'sol', 'la', 'si', 'do', 're', 'mi', 'fa', 'sol', 'la', 'si', 'do']
   // } else if (roleType == 'dan') {
   //   scaleCents = [0, 200, 400, 700, 900, 1200, 1400, 1600, 1900];
   //   scaleDegrees = [1, 2, 3, 5, 6, 1, 2, 3, 5];
