@@ -46,6 +46,9 @@ var strokes;
 var cursor;
 var cursorW = 5;
 var banguW = 20;
+var tubu;
+var tab;
+var tabLines = [];
 
 var title;
 var subtitle;
@@ -102,8 +105,10 @@ function preload () {
   version = document.documentElement.lang;
   if (version == 'en') {
     recordingsInfo = loadJSON("files/recordingsInfo.json");
+    tubu = loadJSON("files/tubu.json");
   } else if (version == 'es') {
     recordingsInfo = loadJSON("../files/recordingsInfo.json");
+    tubu = loadJSON("../files/tubu.json");
   }
 }
 
@@ -204,7 +209,7 @@ function setup () {
   bpm = new CreateBpm();
   bangu = new CreateBangu();
 
-  headingLeft = leftExtraSpace + 20 + selectMenu.width;
+  headingLeft = leftExtraSpace + 10;
   headingX = headingLeft + (width - headingLeft) / 2
 }
 
@@ -234,15 +239,15 @@ function draw () {
   navigationBox.displayBack();
 
   if (visualization == 'melody') {
-    for (var i = 0; i < scaleLines.length; i++) {
-      stroke(200);
-      var degree = scaleCents[i];
-      if (degree == -1200 || degree == 0 || degree == 1200) {
-        strokeWeight(3);
-      } else {
-        strokeWeight(1);
-      }
-      line(headingLeft+30, scaleLines[i], width-40, scaleLines[i]);
+    for (var i = 0; i < scaleDegrees.length; i++) {
+      stroke(220);
+      strokeWeight(1);
+      line(headingLeft+30, scaleDegrees[i][1], width-40, scaleDegrees[i][1]);
+    }
+    for (var i = 0; i < tabLines.length; i++) {
+      stroke(165, 214, 167);
+      strokeWeight(tabLines[i][1]);
+      line(headingLeft+30, tabLines[i][0], width-40, tabLines[i][0]);
     }
     var start = int(currentTime * 100);
     for (var i = 0; i < width-headingLeft-30; i++) {
@@ -253,7 +258,7 @@ function draw () {
       strokeWeight(1);
       line(x, y-1, x, y+2);
     }
-    stroke(165, 214, 167);
+    stroke(76, 175, 80);
     strokeWeight(cursorW);
     var x = headingLeft+10 + (width-headingLeft-30)/2;
     line(x, lyricsBoxTop+cursorW/2, x, lyricsBoxBottom-cursorW/2);
@@ -266,8 +271,8 @@ function draw () {
       textSize(12);
       noStroke();
       fill(0);
-      text(scaleDegrees[i], headingLeft+20, scaleLines[i]);
-      text(scaleDegrees[i], width-30, scaleLines[i]);
+      text(scaleDegrees[i][0], headingLeft+20, scaleDegrees[i][1]);
+      text(scaleDegrees[i][0], width-30, scaleDegrees[i][1]);
     }
   }
 
@@ -360,6 +365,7 @@ function start () {
   // credits = new CreateCredits(recording);
   mizan = recording.mizan;
   nawba = recording.nawba;
+  tab = tubu[recording.tab.code];
   title = mizan.tr[0].toUpperCase() + mizan.tr.slice(1, mizan.tr.length) + ' ' + nawba.tr;
   orchestra = recording.orchestra;
   trackDuration = recording.duration;
@@ -368,7 +374,7 @@ function start () {
   //   scaleCents = [-1200, -1000, -800, -500, -300, 0, 200, 400, 700, 900, 1200];
   scaleCents = [-1200, -1000, -800, -700, -500, -300, -100, 0, 200, 400, 500, 700, 900, 1100, 1200]
   //   scaleDegrees = [1, 2, 3, 5, 6, 1, 2, 3, 5, 6, 1];
-  scaleDegrees = ['do', 're', 'mi', 'fa', 'sol', 'la', 'si', 'do', 're', 'mi', 'fa', 'sol', 'la', 'si', 'do']
+  scaleDegrees = [['do'], ['re'], ['mi'], ['fa'], ['sol'], ['la'], ['si'], ['do'], ['re'], ['mi'], ['fa'], ['sol'], ['la'], ['si'], ['do']]
   // } else if (roleType == 'dan') {
   //   scaleCents = [0, 200, 400, 700, 900, 1200, 1400, 1600, 1900];
   //   scaleDegrees = [1, 2, 3, 5, 6, 1, 2, 3, 5];
@@ -377,8 +383,19 @@ function start () {
   // }
   minCent = scaleCents[0]-50;
   maxCent = scaleCents[scaleCents.length-1]+50;
+  navigationBox.tabLines();
   for (var i = 0; i < scaleCents.length; i++) {
-    scaleLines.push(map(scaleCents[i], minCent, maxCent, lyricsBoxBottom, lyricsBoxTop));
+    scaleDegrees[i].push(map(scaleCents[i], minCent, maxCent, lyricsBoxBottom, lyricsBoxTop));
+  }
+  var tonic_y = map(tab.tonic, minCent, maxCent, lyricsBoxBottom, lyricsBoxTop);
+  tabLines.push([tonic_y, 6]);
+  var sustain_y = map(tab.sustain, minCent, maxCent, lyricsBoxBottom, lyricsBoxTop);
+  tabLines.push([sustain_y, 4]);
+  for (var i = 0; i < tab.main.length; i++) {
+    if (tab.main[i] != tab.tonic || tab.main[i] != tab.sustain) {
+      var main_y = map(tab.main[i], minCent, maxCent, lyricsBoxBottom, lyricsBoxTop);
+      tabLines.push([main_y, 2]);
+    }
   }
   // var bpms = [];
   // var banshi = recording.banshi;
@@ -453,11 +470,32 @@ function CreateNavigationBox () {
   this.y1 = height - navigationBoxH - 10;
   this.y2 = height - 10;
   this.w = this.x2 - this.x1;
+  this.tonic;
+  this.sustain;
+  this.main = [];
+
+  this.tabLines = function () {
+    this.tonic = map(tab.tonic, minCent, maxCent, this.y2, this.y1);
+    this.sustain = map(tab.sustain, minCent, maxCent, this.y2, this.y1);
+    for (var i = 0; i < tab.main.length; i++) {
+      var main_y = map(tab.main[i], minCent, maxCent, this.y2, this.y1);
+      this.main.push(main_y);
+    }
+  }
 
   this.displayBack = function () {
-    fill(0, 50);
+    fill(0, 150);
     noStroke();
     rect(this.x1, this.y1, this.w, navigationBoxH);
+    stroke(255, 150);
+    strokeWeight(3);
+    line(this.x1, this.tonic, this.x2, this.tonic);
+    strokeWeight(2);
+    line(this.x1, this.sustain, this.x2, this.sustain);
+    strokeWeight(1);
+    for (var i = 0; i < this.main.length; i++) {
+      line(this.x1, this.main[i], this.x2, this.main[i]);
+    }
     // for (var i = 0; i < banguList.length; i++) {
     //   stroke(255);
     //   strokeWeight(1);
@@ -506,7 +544,7 @@ function CreateCursor () {
   }
 
   this.display = function () {
-    stroke(165, 214, 167);
+    stroke(76, 175, 80);
     strokeWeight(cursorW);
     line(this.x, navigationBox.y1+cursorW/2, this.x, navigationBox.y2-cursorW/2);
   }
@@ -533,9 +571,14 @@ function CreateLyricsBox (lyrics, i) {
   this.ly1 = lyricsBoxTop + 20*i;
   this.ly2 = this.ly1+20;
   this.fill = color(0, 50);
-  this.stroke = color(255, 255, 204, 100);
-  this.txtBack = color(255, 0);
+  this.stroke;
+  this.txtBack;
   this.lyrics = lyrics.lyrics;
+  if (this.lyrics['es'][0] == '#') {
+    this.color = color(255, 50);
+  } else {
+    this.color = color(255, 120);
+  }
   // this.lyricsChinese = lyrics.lyricsChinese;
   // this.lyrics2display;
   this.hidden;
@@ -551,8 +594,8 @@ function CreateLyricsBox (lyrics, i) {
         lyricsShift = lyricsBoxBottom - this.ly2;
       }
     } else {
-      this.fill = color(0, 50);
-      this.stroke = color(255, 255, 204, 100);
+      this.fill = this.color;
+      this.stroke = color(0, 50);
       this.txtBack = color(255, 0);
     }
     // if (langButton.html() == "中") {
@@ -582,8 +625,13 @@ function CreateLyricsBox (lyrics, i) {
       textStyle(NORMAL);
       textSize(15);
       fill(0);
+      var lyric = this.lyrics[lang];
+      if (lyric[0] == '#') {
+        lyric = '     ' + lyric.substring(1);
+        textStyle(ITALIC);
+      }
       if (visualization == 'lines') {
-        text(this.lyrics[lang], this.lx1+10, this.ly1+lyricsShift, this.lx2-this.lx1-20, 20);
+        text(lyric, this.lx1+10, this.ly1+lyricsShift, this.lx2-this.lx1-20, 20);
       }
     } else {
       this.hidden = true;
