@@ -112,5 +112,119 @@
         "end": 324.85
       }
     ]
+  },
+  "6fe7108c-4e4f-457b-a363-ccf505bdee9a": {
+    "nawba": {
+      "ar": "الاستهلال",
+      "tr": "al-istihlāl"
+    },
+    "tab": {
+      "code": "alistihlal",
+      "ar": "الاستهلال",
+      "tr": "al-istihlāl"
+    },
+    "mizan": {
+      "ar": "بطايحي",
+      "tr": "bṭāyḥī"
+    },
+    "orchestra": {
+      "ar": "جوق المعهد التطواني",
+      "en": "Orchestra of the Tetouan Conservatory",
+      "es": "Orquesta del conservatorio de Tetuán"
+    },
+    "info": "https://musicbrainz.org/recording/6fe7108c-4e4f-457b-a363-ccf505bdee9a",
+    "duration": 324.85,
+    "lyrics": [
+      {
+        "lyrics": {
+          "ar": "وَعَشِيَّةٍ لازِلْتُ أَرْقُبُ وَقْتَهَا",
+          "es": "¡Qué tarde [aquella]! No dejaba yo de esperar su llegada",
+          "en": ""
+        },
+        "start": 0,
+        "end": 15.2
+      },
+      {
+        "lyrics": {
+          "ar": "وَعَشِيَّةٍ لازِلْتُ أَرْقُبُ وَقْتَهَا",
+          "es": "#¡Qué tarde [aquella]! No dejaba yo de esperar su llegada",
+          "en": ""
+        },
+        "start": 15.2,
+        "end": 32.72
+      },
+      {
+        "lyrics": {
+          "ar": "",
+          "es": "#Yalala...",
+          "en": ""
+        },
+        "start": 32.72,
+        "end": 83.25
+      },
+      {
+        "lyrics": {
+          "ar": "قَدْ بَشَّرَتْ بِوِصَالِهَا قَلْبِي المُحْرَقِ",
+          "es": "porque anunciaba la unión al corazón encendido.",
+          "en": ""
+        },
+        "start": 83.25,
+        "end": 100.41
+      },
+      {
+        "lyrics": {
+          "ar": "",
+          "es": "#Yalala...",
+          "en": ""
+        },
+        "start": 100.41,
+        "end": 109.24
+      },
+      {
+        "lyrics": {
+          "ar": "وَالشَّمْسُ مِنْ تَحْتِ السَّحَابِ كَأَنَّهَا",
+          "es": "El sol bajo las nubes semejaba",
+          "en": ""
+        },
+        "start": 217.22,
+        "end": 232.2
+      },
+      {
+        "lyrics": {
+          "ar": "وَالشَّمْسُ مِنْ تَحْتِ السَّحَابِ كَأَنَّهَا",
+          "es": "#El sol bajo las nubes semejaba",
+          "en": ""
+        },
+        "start": 232.2,
+        "end": 248.94
+      },
+      {
+        "lyrics": {
+          "ar": "",
+          "es": "#Yalala...",
+          "en": ""
+        },
+        "start": 248.94,
+        "end": 299.2
+      },
+      {
+        "lyrics": {
+          "ar": "ذَهَبٌ تَقَلَّبَ فِي قَمِيصٍ أَزْرَقِ",
+          "es": "oro bordado en una túnica azul.",
+          "en": ""
+        },
+        "start": 299.2,
+        "end": 316.22
+      },
+      {
+        "lyrics": {
+          "ar": "",
+          "es": "#Yalala...",
+          "en": ""
+        },
+        "start": 316.22,
+        "end": 324.85
+      }
+    ]
   }
 }
