@@ -1,5 +1,8 @@
-var mainWidth = 1070
-var mainHeight = 600
+// General measurements
+var mainWidth = 1070;
+var mainHeight = 600;
+var title_y = 22;
+var orchestra_y = 50;
 // Html interaction
 var recordingSelector;
 var playButton;
@@ -109,11 +112,11 @@ function draw() {
     fill(0);
     textSize(20);
     textStyle(BOLD);
-    text(title[textsLang], width/2, 22);
+    text(title[textsLang], width/2, title_y);
     noStroke();
     fill(0);
     textSize(18);
-    text(orchestra[textsLang], width/2, 50);
+    text(orchestra[textsLang], width/2, orchestra_y);
   }
 
   if (loaded && playing) {
