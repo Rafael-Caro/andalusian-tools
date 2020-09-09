@@ -3,6 +3,9 @@ var mainHeight = 600
 // Html interaction
 var recordingSelector;
 var playButton;
+// Boxes
+var navigationBox;
+var navigationBoxH = 100;
 // Audio
 var mbid;
 var track;
@@ -67,6 +70,7 @@ function setup() {
   ellipseMode(CORNER);
   strokeJoin(ROUND);
 
+  // Interaction buttons
   recordingSelector = createSelect()
     .size(100, 20)
     .position(10, 10)
@@ -96,10 +100,16 @@ function setup() {
     .mousePressed(player)
     .parent("sketch-holder")
     .attribute("disabled", "true");
+
+  // Boxes
+  navigationBox = new CreateNavigationBox();
 }
 
 function draw() {
   background(165, 214, 167)
+  // Boxes
+  navigationBox.displayBack();
+  navigationBox.displayFront();
 }
 
 function start() {
@@ -115,9 +125,38 @@ function start() {
   playButton.html(labels.play[language]);
   playButton.attribute("disabled", "true");
   // Load new audio
-  mbid = recordingSelector.value()
+  mbid = recordingSelector.value();
   audioLoader(mbid);
 }
+
+
+
+// Boxes
+function CreateNavigationBox() {
+  this.x1 = 10;
+  this.x2 = width - 10;
+  this.y1 = height - navigationBoxH - 10;
+  this.y2 = height - 10;
+  this.w = this.x2 - this.x1
+
+  this.displayBack = function() {
+    fill(255);
+    noStroke();
+    rect(this.x1, this.y1, this.w, navigationBoxH);
+  }
+
+  this.displayFront = function() {
+    stroke(0, 150);
+    strokeWeight(1);
+    line(this.x1+1, this.y1, this.x2, this.y1);
+    line(this.x2, this.y1, this.x2, this.y2);
+    strokeWeight(2);
+    line(this.x1, this.y1, this.x1, this.y2);
+    line(this.x1, this.y2, this.x2, this.y2);
+  }
+}
+
+
 
 // Audio
 function audioLoader() {
