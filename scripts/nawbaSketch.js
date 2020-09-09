@@ -5,9 +5,10 @@ var recordingSelector;
 var playButton;
 // Visualizations
 var navigationBox;
-var navigationBoxH = 100;
+var navigationBoxH = 70;
 var navBoxCursor;
 var navBoxCursorW = 3;
+var lyricsBoxes = [];
 // Audio
 var mbid;
 var track;
@@ -115,14 +116,19 @@ function draw() {
     text(orchestra[textsLang], width/2, 50);
   }
 
-  navigationBox.displayBack();
-
   if (loaded && playing) {
     currentTime = track.currentTime();
   }
 
+  navigationBox.displayBack();
+
   navBoxCursor.update();
   navBoxCursor.display();
+
+  for (var i = 0; i < lyricsBoxes.length; i++) {
+    lyricsBoxes[i].update();
+    lyricsBoxes[i].display();
+  }
 
   navigationBox.displayFront();
 }
@@ -136,8 +142,9 @@ function start() {
   playing = false;
   currentTime = undefined;
   jump = undefined;
-  // Multilanguage
+  // Reset data
   textsLang = language;
+  lyricsBoxes = [];
   // Reset buttons
   playButton.html(labels.play[language]);
   playButton.attribute("disabled", "true");
@@ -154,6 +161,12 @@ function start() {
   title = {'ar': arTitle, 'en': trTitle, 'es': trTitle};
   orchestra = recording.orchestra;
   trackDuration = recording.duration;
+  // Lyrics boxes
+  var lyrics = recording.lyrics;
+  for (var i = 0; i < lyrics.length; i++) {
+      var lyricsBox = new CreateLyricsBox(lyrics[i], i);
+      lyricsBoxes.push(lyricsBox);
+  }
 }
 
 
@@ -214,6 +227,35 @@ function CreateNavBoxCursor() {
     strokeWeight(navBoxCursorW);
     line(this.x, navigationBox.y1+navBoxCursorW/2, this.x,
       navigationBox.y2-navBoxCursorW/2);
+  }
+}
+
+function CreateLyricsBox(lyric, i) {
+  this.nav_x1 = map(lyric.start, 0, trackDuration,
+    navigationBox.x1+navBoxCursorW/2, navigationBox.x2-navBoxCursorW/2);
+  this.nav_x2 = map(lyric.end, 0, trackDuration,
+    navigationBox.x1+navBoxCursorW/2, navigationBox.x2-navBoxCursorW/2);
+  this.nav_y1 = navigationBox.y1;
+  this.w = this.nav_x2 - this.nav_x1;
+  this.h = navigationBoxH;
+  this.fill;
+  this.stroke;
+
+  this.update = function() {
+    if (navBoxCursor.x >= this.nav_x1 && navBoxCursor.x < this.nav_x2) {
+      this.fill = color(0, 150);
+      this.stroke = color(0)
+    } else {
+      this.fill = color(0, 70);
+      this.stroke = color(0, 70);
+    }
+  }
+
+  this.display = function() {
+    fill(this.fill);
+    stroke(this.stroke);
+    strokeWeight(1);
+    rect(this.nav_x1, this.nav_y1, this.w, this.h);
   }
 }
 
