@@ -1,16 +1,19 @@
 // General measurements
 var mainWidth = 1070;
 var mainHeight = 600;
-var title_y = 22;
-var orchestra_y = 50;
+var vDiv1 = 200;
 // Html interaction
 var recordingSelector;
 var playButton;
 // Visualizations
+var title_y = 22;
+var orchestra_y = 50;
 var navigationBox;
 var navigationBoxH = 70;
 var navBoxCursor;
 var navBoxCursorW = 3;
+var lyricsDisplay_y = orchestra_y + 30
+var lyricsDisplayH = 200;
 var lyricsBoxes = [];
 // Audio
 var mbid;
@@ -118,6 +121,19 @@ function draw() {
     textSize(18);
     text(orchestra[textsLang], width/2, orchestra_y);
   }
+
+  // Lyrics display box
+  fill(255);
+  noStroke();
+  rect(vDiv1+10, lyricsDisplay_y, width-vDiv1-20, lyricsDisplayH);
+  stroke(0);
+  strokeWeight(1);
+  line(vDiv1+10, lyricsDisplay_y, width-10, lyricsDisplay_y);
+  line(width-10, lyricsDisplay_y, width-10, lyricsDisplay_y+lyricsDisplayH);
+  strokeWeight(2);
+  line(vDiv1+10, lyricsDisplay_y+lyricsDisplayH, width-10,
+    lyricsDisplay_y+lyricsDisplayH);
+  line(vDiv1+10, lyricsDisplay_y+1, vDiv1+10, lyricsDisplay_y+lyricsDisplayH);
 
   if (loaded && playing) {
     currentTime = track.currentTime();
