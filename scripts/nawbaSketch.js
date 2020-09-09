@@ -123,11 +123,11 @@ function draw() {
     fill(0);
     textSize(20);
     textStyle(BOLD);
-    text(title[textsLang], width/2, title_y);
+    text(title[textsLang], (width-vDiv1-20)/2+vDiv1, title_y);
     noStroke();
     fill(0);
     textSize(18);
-    text(orchestra[textsLang], width/2, orchestra_y);
+    text(orchestra[textsLang], (width-vDiv1-20)/2+vDiv1, orchestra_y);
   }
 
   // Lyrics display box
