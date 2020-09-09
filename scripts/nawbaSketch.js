@@ -188,10 +188,10 @@ function CreateNavigationBox() {
   this.displayFront = function() {
     stroke(0, 150);
     strokeWeight(1);
-    line(this.x1, this.y1, this.x2, this.y1);
-    line(this.x2, this.y1, this.x2, this.y2);
+    line(this.x1, this.y1-1, this.x2, this.y1-1);
+    line(this.x2, this.y1-1, this.x2, this.y2);
     strokeWeight(2);
-    line(this.x1, this.y1+1, this.x1, this.y2);
+    line(this.x1, this.y1, this.x1, this.y2);
     line(this.x1, this.y2, this.x2, this.y2);
   }
 
@@ -237,17 +237,17 @@ function CreateLyricsBox(lyric, i) {
     navigationBox.x1+navBoxCursorW/2, navigationBox.x2-navBoxCursorW/2);
   this.nav_y1 = navigationBox.y1;
   this.w = this.nav_x2 - this.nav_x1;
-  this.h = navigationBoxH;
+  this.h = navigationBoxH-2;
   this.fill;
   this.stroke;
 
   this.update = function() {
     if (navBoxCursor.x >= this.nav_x1 && navBoxCursor.x < this.nav_x2) {
       this.fill = color(0, 150);
-      this.stroke = color(0)
+      this.stroke = color(0, 150);
     } else {
       this.fill = color(0, 70);
-      this.stroke = color(0, 70);
+      this.stroke = color(255);
     }
   }
 
