@@ -163,10 +163,10 @@ function CreateNavigationBox() {
   this.displayFront = function() {
     stroke(0, 150);
     strokeWeight(1);
-    line(this.x1+1, this.y1, this.x2, this.y1);
+    line(this.x1, this.y1, this.x2, this.y1);
     line(this.x2, this.y1, this.x2, this.y2);
     strokeWeight(2);
-    line(this.x1, this.y1, this.x1, this.y2);
+    line(this.x1, this.y1+1, this.x1, this.y2);
     line(this.x1, this.y2, this.x2, this.y2);
   }
 }
