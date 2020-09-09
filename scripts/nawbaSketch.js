@@ -3,9 +3,11 @@ var mainHeight = 600
 // Html interaction
 var recordingSelector;
 var playButton;
-// Boxes
+// Visualizations
 var navigationBox;
 var navigationBoxH = 100;
+var navBoxCursor;
+var navBoxCursorW = 3;
 // Audio
 var mbid;
 var track;
@@ -13,6 +15,7 @@ var loaded;
 var playing;
 var currentTime;
 var jump;
+var trackDuration;
 // Multilanguage
 var language;
 var labels = {
@@ -101,14 +104,23 @@ function setup() {
     .parent("sketch-holder")
     .attribute("disabled", "true");
 
-  // Boxes
+  // Visualizations
   navigationBox = new CreateNavigationBox();
+  navBoxCursor = new CreateNavBoxCursor();
 }
 
 function draw() {
   background(165, 214, 167)
-  // Boxes
+
   navigationBox.displayBack();
+
+  if (loaded && playing) {
+    currentTime = track.currentTime();
+  }
+
+  navBoxCursor.update();
+  navBoxCursor.display();
+
   navigationBox.displayFront();
 }
 
@@ -127,11 +139,14 @@ function start() {
   // Load new audio
   mbid = recordingSelector.value();
   audioLoader(mbid);
+  // Load metadata
+  var recording = recordingsInfo[mbid];
+  trackDuration = recording.duration;
 }
 
 
 
-// Boxes
+// Visualizations
 function CreateNavigationBox() {
   this.x1 = 10;
   this.x2 = width - 10;
@@ -153,6 +168,28 @@ function CreateNavigationBox() {
     strokeWeight(2);
     line(this.x1, this.y1, this.x1, this.y2);
     line(this.x1, this.y2, this.x2, this.y2);
+  }
+}
+
+function CreateNavBoxCursor() {
+  this.x;
+
+  this.update = function() {
+    this.x = map(currentTime, 0, trackDuration,
+      navigationBox.x1+navBoxCursorW/2, navigationBox.x2-navBoxCursorW/2);
+    if (navigationBox.x2 - navBoxCursorW/2 - this.x < 0.1) {
+      track.stop();
+      playing = false;
+      currentTime = 0;
+      playButton.html(labels.play[language]);
+    }
+  }
+
+  this.display = function() {
+    stroke(0);
+    strokeWeight(navBoxCursorW);
+    line(this.x, navigationBox.y1+navBoxCursorW/2, this.x,
+      navigationBox.y2-navBoxCursorW/2);
   }
 }
 
