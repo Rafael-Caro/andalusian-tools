@@ -103,6 +103,18 @@ function draw() {
 }
 
 function start() {
+  // Stop and remove current audio
+  if (loaded) {
+    track.stop();
+  }
+  loaded = false;
+  playing = false;
+  currentTime = undefined;
+  jump = undefined;
+  // Reset buttons
+  playButton.html(labels.play[language]);
+  playButton.attribute("disabled", "true");
+  // Load new audio
   mbid = recordingSelector.value()
   audioLoader(mbid);
 }
