@@ -5,6 +5,7 @@ var vDiv1 = 200;
 // Html interaction
 var recordingSelector;
 var playButton;
+var languageButton;
 // Visualizations
 var title_y = 22;
 var orchestra_y = 50;
@@ -99,6 +100,13 @@ function setup() {
     .parent("sketch-holder")
     .attribute("disabled", "true");
 
+  languageButton = createButton("عر")
+    .size(30, 30)
+    .position(width-30-10, 10)
+    .mousePressed(languageChange)
+    .parent("sketch-holder")
+    .attribute("disabled", "true");
+
   // Visualizations
   navigationBox = new CreateNavigationBox();
   navBoxCursor = new CreateNavBoxCursor();
@@ -167,6 +175,8 @@ function start() {
   // Reset buttons
   playButton.html(labels.play[language]);
   playButton.attribute("disabled", "true");
+  languageButton.removeAttribute("disabled");
+  languageButton.html("عر");
   // Load new audio
   mbid = recordingSelector.value();
   audioLoader(mbid);
@@ -318,6 +328,16 @@ function player() {
 function mouseClicked () {
   if (loaded) {
     navigationBox.clicked();
+  }
+}
+
+function languageChange () {
+  if (textsLang == "ar") {
+    textsLang = language;
+    languageButton.html("عر");
+  } else {
+    textsLang = "ar";
+    languageButton.html(language.toUpperCase());
   }
 }
 
