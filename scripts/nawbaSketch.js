@@ -19,6 +19,10 @@ var lyricLineH = 25;
 var lyricsDisplayHFactor = 8
 var lyricsDisplayH = lyricLineH * lyricsDisplayHFactor + 10;
 var lyricLineShift = 0;
+var patternLabelBoxes = [];
+var patternLabelBoxes_y = 100;
+var patternLabelBoxes_w = 80;
+var patternLabelH = 30;
 // Audio
 var mbid;
 var track;
@@ -152,13 +156,18 @@ function draw() {
 
   navigationBox.displayBack();
 
-  navBoxCursor.update();
-  navBoxCursor.display();
-
   for (var i = 0; i < lyricsBoxes.length; i++) {
     lyricsBoxes[i].update();
     lyricsBoxes[i].display();
   }
+
+  for (var i = 0; i < patternLabelBoxes.length; i++) {
+    patternLabelBoxes[i].update();
+    patternLabelBoxes[i].display();
+  }
+
+  navBoxCursor.update();
+  navBoxCursor.display();
 
   navigationBox.displayFront();
 }
@@ -176,6 +185,8 @@ function start() {
   textsLang = language;
   lyricsBoxes = [];
   lyricLineShift = 0;
+  patternLabelBoxes = [];
+  patternBoxes = [];
   // Reset buttons
   playButton.html(labels.play[language]);
   playButton.attribute("disabled", "true");
@@ -199,6 +210,20 @@ function start() {
   for (var i = 0; i < lyrics.length; i++) {
       var lyricsBox = new CreateLyricsBox(lyrics[i], i);
       lyricsBoxes.push(lyricsBox);
+  }
+  // Patterns
+  var patterns = recording.patterns;
+  var patternLabels = Object.keys(patterns).sort();
+  // for (var i = 0; i < patternLabels.length; i++) {
+  for (var i = 0; i < 1; i++) {
+    var patternLabel = patternLabels[i];
+    var patternLabelBox = new CreatePatternLabelBox(patternLabel, i);
+    for (var j = 0; j < patterns[patternLabel].length; j++) {
+      var pattern = patterns[patternLabel][j];
+      var patternBox = new CreatePatternBox(pattern, patternLabel, i);
+      patternLabelBox.patternBoxes.push(patternBox);
+    }
+    patternLabelBoxes.push(patternLabelBox);
   }
 }
 
@@ -343,6 +368,60 @@ function CreateLyricsBox(lyric, i) {
       text(txt, this.lx1, this.ly1-(lyricLineH*0.2)+lyricLineShift,
         this.lw-30, this.lh);
     }
+  }
+}
+
+function CreatePatternLabelBox(patternLabel, i) {
+  this.x = 20;
+  this.y = patternLabelBoxes_y + (patternLabelH * i);
+  this.patternBoxes = [];
+  this.sounding = 0;
+
+  this.update = function() {
+    var sounding = 0;
+    for (var i = 0; i < this.patternBoxes.length; i++) {
+      patternBox = this.patternBoxes[i];
+      if (navBoxCursor.x >= patternBox.nav_x1 && navBoxCursor.x <= patternBox.nav_x2) {
+        sounding += 1;
+      }
+    }
+    this.sounding = sounding;
+  }
+
+  this.display = function() {
+    if (this.sounding > 0) {
+      print('yes');
+      textStyle(BOLD);
+      stroke('red');
+    } else {
+      textStyle(NORMAL);
+      noStroke();
+    }
+    textSize(lyricLineH * 0.60);
+    fill(0);
+    text(patternLabel, this.x, this.y, patternLabelBoxes_w, patternLabelH);
+    for (var i = 0; i < this.patternBoxes.length; i++) {
+      this.patternBoxes[i].update();
+      this.patternBoxes[i].display();
+    }
+  }
+}
+
+function CreatePatternBox(pattern, patternLabel, i) {
+  this.nav_x1 = map(pattern.start, 0, trackDuration,
+    navigationBox.x1+navBoxCursorW/2, navigationBox.x2-navBoxCursorW/2);
+  this.nav_x2 = map(pattern.end, 0, trackDuration,
+    navigationBox.x1+navBoxCursorW/2, navigationBox.x2-navBoxCursorW/2);
+  this.nav_w = this.nav_x2 - this.nav_x1;
+
+  this.update = function() {}
+
+  this.display = function() {
+    // stroke(255, 0, 0);
+    // strokeWeight(1);
+    noStroke();
+    fill(255, 0, 0, 100);
+    rect(this.nav_x1, navigationBox.y1, this.nav_w, navigationBoxH);
   }
 }
 
