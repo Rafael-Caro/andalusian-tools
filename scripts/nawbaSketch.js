@@ -14,8 +14,11 @@ var navigationBoxH = 70;
 var navBoxCursor;
 var navBoxCursorW = 3;
 var lyricsDisplay_y = orchestra_y + 30
-var lyricsDisplayH = 200;
 var lyricsBoxes = [];
+var lyricLineH = 25;
+var lyricsDisplayHFactor = 8
+var lyricsDisplayH = lyricLineH * lyricsDisplayHFactor + 10;
+var lyricLineShift = 0;
 // Audio
 var mbid;
 var track;
@@ -172,6 +175,7 @@ function start() {
   // Reset data
   textsLang = language;
   lyricsBoxes = [];
+  lyricLineShift = 0;
   // Reset buttons
   playButton.html(labels.play[language]);
   playButton.attribute("disabled", "true");
@@ -260,31 +264,85 @@ function CreateNavBoxCursor() {
 }
 
 function CreateLyricsBox(lyric, i) {
+  // Data for navigation boxes
   this.nav_x1 = map(lyric.start, 0, trackDuration,
     navigationBox.x1+navBoxCursorW/2, navigationBox.x2-navBoxCursorW/2);
   this.nav_x2 = map(lyric.end, 0, trackDuration,
     navigationBox.x1+navBoxCursorW/2, navigationBox.x2-navBoxCursorW/2);
   this.nav_y1 = navigationBox.y1;
-  this.w = this.nav_x2 - this.nav_x1;
-  this.h = navigationBoxH-2;
-  this.fill;
-  this.stroke;
+  this.nav_w = this.nav_x2 - this.nav_x1;
+  this.nav_h = navigationBoxH-2;
+  if (lyric.lyrics['es'][0] == '#') {
+    this.mainLine = false;
+  } else {
+    this.mainLine = true;
+  }
+  if (this.mainLine) {
+    this.nav_def_fill = color(0, 70);
+  } else {
+    this.nav_def_fill = color(0, 40);
+  }
+  this.nav_fill;
+  this.nav_stroke;
+  // Data for lyrics display boxes
+  this.lx1 = vDiv1 + 20;
+  this.ly1 = 5 + lyricsDisplay_y + (lyricLineH * i);
+  this.lw = width-10 - this.lx1 + 10;
+  this.lh = lyricLineH;
+  this.lfill;
 
   this.update = function() {
+    // Check if the cursor is within a lyrics navigation box
     if (navBoxCursor.x >= this.nav_x1 && navBoxCursor.x < this.nav_x2) {
-      this.fill = color(0, 150);
-      this.stroke = color(0, 150);
+      this.nav_fill = color(0, 150);
+      this.nav_stroke = color(0, 150);
+      this.lfill = color(0, 40);
+      if (this.ly1 + lyricLineShift >= lyricsDisplay_y+lyricsDisplayH-5) {
+        lyricLineShift = lyricsDisplay_y+lyricsDisplayH-this.ly1-lyricLineH-5;
+      } else if (this.ly1+lyricLineShift <= lyricsDisplay_y) {
+        lyricLineShift = lyricsDisplay_y - this.ly1 + 5;;
+      }
     } else {
-      this.fill = color(0, 70);
-      this.stroke = color(255);
+      this.nav_fill = this.nav_def_fill;
+      this.nav_stroke = color(255);
+      this.lfill = color(0, 0);
     }
+
   }
 
   this.display = function() {
-    fill(this.fill);
-    stroke(this.stroke);
+    // Navigation box
+    fill(this.nav_fill);
+    stroke(this.nav_stroke);
     strokeWeight(1);
-    rect(this.nav_x1, this.nav_y1, this.w, this.h);
+    rect(this.nav_x1, this.nav_y1, this.nav_w, this.nav_h);
+    if (this.ly1 + lyricLineShift > lyricsDisplay_y &&
+      this.ly1 + lyricLineShift < lyricsDisplay_y + lyricsDisplayH - 5) {
+      // Lyrics display box
+      fill(this.lfill);
+      noStroke();
+      rect(this.lx1-10, this.ly1+lyricLineShift, this.lw, this.lh);
+      // Lyrics text
+      if (textsLang == 'ar') {
+        textAlign(RIGHT, BOTTOM);
+      } else {
+        textAlign(LEFT, BOTTOM);
+      }
+      textStyle(BOLD);
+      textSize(lyricLineH * 0.60);
+      fill(0);
+      var txt = lyric.lyrics[textsLang];
+      if (!this.mainLine) {
+        if (textsLang == 'ar') {
+          txt = txt + '       ';
+        } else {
+          txt = '       ' + txt.substring(1)
+        }
+        textStyle(ITALIC);
+      }
+      text(txt, this.lx1, this.ly1-(lyricLineH*0.2)+lyricLineShift,
+        this.lw-30, this.lh);
+    }
   }
 }
 
