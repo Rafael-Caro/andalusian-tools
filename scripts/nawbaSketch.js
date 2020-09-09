@@ -16,8 +16,12 @@ var playing;
 var currentTime;
 var jump;
 var trackDuration;
+// Metadata
+var title;
+var orchestra;
 // Multilanguage
 var language;
+var textsLang;
 var labels = {
   "play": {
     "en": "Play",
@@ -31,25 +35,9 @@ var labels = {
     "en": "Play",
     "es": "Sigue"
   },
-  "melody": {
-    "en": "Melody",
-    "es": "Melodía"
-  },
-  "lines": {
-    "en": "Lyrics",
-    "es": "Versos"
-  },
-  "voice": {
-    "en": " voice",
-    "es": " voz"
-  },
   "select": {
     "en": "Select",
     "es": "Elige"
-  },
-  "scattered": {
-    "en": "scattered",
-    "es": "disperso"
   }
 }
 
@@ -112,6 +100,21 @@ function setup() {
 function draw() {
   background(165, 214, 167)
 
+  // Title and orchestra
+  if (recordingSelector.value() != labels.select[language]) {
+    textAlign(CENTER, TOP);
+    stroke(0);
+    strokeWeight(1);
+    fill(0);
+    textSize(20);
+    textStyle(BOLD);
+    text(title[textsLang], width/2, 22);
+    noStroke();
+    fill(0);
+    textSize(18);
+    text(orchestra[textsLang], width/2, 50);
+  }
+
   navigationBox.displayBack();
 
   if (loaded && playing) {
@@ -133,6 +136,8 @@ function start() {
   playing = false;
   currentTime = undefined;
   jump = undefined;
+  // Multilanguage
+  textsLang = language;
   // Reset buttons
   playButton.html(labels.play[language]);
   playButton.attribute("disabled", "true");
@@ -141,6 +146,13 @@ function start() {
   audioLoader(mbid);
   // Load metadata
   var recording = recordingsInfo[mbid];
+  var nawba = recording.nawba;
+  var tab = recording.tab;
+  var mizan = recording.mizan;
+  var trTitle = mizan.tr[0].toUpperCase() + mizan.tr.slice(1, mizan.tr.length) + ' ' + tab.tr;
+    var arTitle = mizan.ar + ' ' + tab.ar;
+  title = {'ar': arTitle, 'en': trTitle, 'es': trTitle};
+  orchestra = recording.orchestra;
   trackDuration = recording.duration;
 }
 
