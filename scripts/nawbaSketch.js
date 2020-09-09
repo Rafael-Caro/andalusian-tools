@@ -169,6 +169,18 @@ function CreateNavigationBox() {
     line(this.x1, this.y1+1, this.x1, this.y2);
     line(this.x1, this.y2, this.x2, this.y2);
   }
+
+  this.clicked = function () {
+    if (mouseX > this.x1 && mouseX < this.x2 && mouseY > this.y1 && mouseY < this.y2) {
+      jump = map(mouseX, this.x1, this.x2, 0, trackDuration);
+      if (playing) {
+        track.jump(jump);
+        jump = undefined;
+      } else {
+        currentTime = jump;
+      }
+    }
+  }
 }
 
 function CreateNavBoxCursor() {
@@ -230,6 +242,12 @@ function player() {
 }
 
 // Helper functions
+function mouseClicked () {
+  if (loaded) {
+    navigationBox.clicked();
+  }
+}
+
 function niceTime (seconds) {
   var niceTime;
   var sec = int(seconds%60);
