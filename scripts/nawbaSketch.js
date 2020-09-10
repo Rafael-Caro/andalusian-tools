@@ -294,8 +294,9 @@ function CreateNavBoxCursor() {
     if (currentLine != undefined) {
       var lineStart = lyricsBoxes[currentLine].start;
       var lineEnd = lyricsBoxes[currentLine].end;
-      this.line_x = map(currentTime, lineStart, lineEnd, lineBox.x1,
-                        lineBox.x2);
+      this.line_x = map(currentTime, lineStart, lineEnd,
+                        lineBox.x1+this.lineWeight/2,
+                        lineBox.x2-this.lineWeight/2);
     }
   }
 
