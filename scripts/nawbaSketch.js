@@ -26,6 +26,8 @@ var patternLabelH = 30;
 var colors = ['255, 0, 0', '0, 128, 0', '255, 255, 0',
               '255, 0, 255', '0, 0, 255', '0, 255, 255',
               '255, 165, 0', '128, 0, 128', '0, 255, 0'];
+var lineBox;
+var currentLine;
 // Audio
 var mbid;
 var track;
@@ -77,7 +79,6 @@ function setup() {
   canvas.parent("sketch-holder");
 
   ellipseMode(CORNER);
-  strokeJoin(ROUND);
 
   // Interaction buttons
   recordingSelector = createSelect()
@@ -124,6 +125,7 @@ function setup() {
   // Visualizations
   navigationBox = new CreateNavigationBox();
   navBoxCursor = new CreateNavBoxCursor();
+  lineBox = new CreateLineBox();
 }
 
 function draw() {
@@ -163,6 +165,10 @@ function draw() {
 
   navigationBox.displayBack();
 
+  navBoxCursor.update();
+
+  lineBox.display();
+
   for (var i = 0; i < lyricsBoxes.length; i++) {
     lyricsBoxes[i].update();
     lyricsBoxes[i].display();
@@ -173,9 +179,7 @@ function draw() {
     patternLabelBoxes[i].display();
   }
 
-  navBoxCursor.update();
   navBoxCursor.display();
-
   navigationBox.displayFront();
 }
 
@@ -193,7 +197,6 @@ function start() {
   lyricsBoxes = [];
   lyricLineShift = 0;
   patternLabelBoxes = [];
-  patternBoxes = [];
   // Reset buttons
   playButton.html(labels.play[language]);
   playButton.attribute("disabled", "true");
@@ -274,11 +277,19 @@ function CreateNavigationBox() {
 }
 
 function CreateNavBoxCursor() {
-  this.x;
+  this.nav_x;
+  this.line_x;
+  this.lineWeight = navBoxCursorW * 2;
 
   this.update = function() {
-    this.x = map(currentTime, 0, trackDuration,
+    this.nav_x = map(currentTime, 0, trackDuration,
       navigationBox.x1+navBoxCursorW/2, navigationBox.x2-navBoxCursorW/2);
+    if (currentLine != undefined) {
+      var lineStart = lyricsBoxes[currentLine].start;
+      var lineEnd = lyricsBoxes[currentLine].end;
+      this.line_x = map(currentTime, lineStart, lineEnd, lineBox.x,
+                        lineBox.x+lineBox.w);
+    }
     if (navigationBox.x2 - navBoxCursorW/2 - this.x < 0.1) {
       track.stop();
       playing = false;
@@ -290,16 +301,35 @@ function CreateNavBoxCursor() {
   this.display = function() {
     stroke(0);
     strokeWeight(navBoxCursorW);
-    line(this.x, navigationBox.y1+navBoxCursorW/2, this.x,
+    line(this.nav_x, navigationBox.y1, this.nav_x,
       navigationBox.y2-navBoxCursorW/2);
+    strokeWeight(this.lineWeight);
+    line(this.line_x, lineBox.y+this.lineWeight/2,
+         this.line_x, lineBox.y+lineBox.h-this.lineWeight/2);
+  }
+}
+
+function CreateLineBox() {
+  this.x = 10;
+  this.y = lyricsDisplay_y + lyricsDisplayH + 10;
+  this.w = width - 20;
+  this.h = navigationBox.y1 - this.y - 10;
+
+  this.display = function() {
+    noStroke();
+    fill(255);
+    rect(this.x, this.y, this.w, this.h);
   }
 }
 
 function CreateLyricsBox(lyric, i) {
+  this.index = i;
+  this.start = lyric.start;
+  this.end = lyric.end;
   // Data for navigation boxes
-  this.nav_x1 = map(lyric.start, 0, trackDuration,
+  this.nav_x1 = map(this.start, 0, trackDuration,
     navigationBox.x1+navBoxCursorW/2, navigationBox.x2-navBoxCursorW/2);
-  this.nav_x2 = map(lyric.end, 0, trackDuration,
+  this.nav_x2 = map(this.end, 0, trackDuration,
     navigationBox.x1+navBoxCursorW/2, navigationBox.x2-navBoxCursorW/2);
   this.nav_y1 = navigationBox.y1;
   this.nav_w = this.nav_x2 - this.nav_x1;
@@ -318,14 +348,15 @@ function CreateLyricsBox(lyric, i) {
   this.nav_stroke;
   // Data for lyrics display boxes
   this.lx1 = vDiv1 + 20;
-  this.ly1 = 5 + lyricsDisplay_y + (lyricLineH * i);
+  this.ly1 = 5 + lyricsDisplay_y + (lyricLineH * this.index);
   this.lw = width-10 - this.lx1 + 10;
   this.lh = lyricLineH;
   this.lfill;
 
   this.update = function() {
     // Check if the cursor is within a lyrics navigation box
-    if (navBoxCursor.x > this.nav_x1 && navBoxCursor.x < this.nav_x2) {
+    if (navBoxCursor.nav_x > this.nav_x1 && navBoxCursor.nav_x < this.nav_x2) {
+      currentLine = this.index;
       this.nav_fill = color(0, 150);
       this.nav_stroke = color(0, 150);
       this.lfill = color(0, 40);
@@ -395,7 +426,8 @@ function CreatePatternLabelBox(patternLabel, i) {
     var sounding = 0;
     for (var j = 0; j < this.patternBoxes.length; j++) {
       patternBox = this.patternBoxes[j];
-      if (navBoxCursor.x >= patternBox.nav_x1 && navBoxCursor.x <= patternBox.nav_x2) {
+      if (navBoxCursor.nav_x >= patternBox.nav_x1 &&
+          navBoxCursor.nav_x <= patternBox.nav_x2) {
         sounding += 1;
       }
     }
@@ -424,13 +456,43 @@ function CreatePatternLabelBox(patternLabel, i) {
 }
 
 function CreatePatternBox(pattern, patternLabel, i, total) {
-  this.nav_x1 = map(pattern.start, 0, trackDuration,
+  this.start = pattern.start;
+  this.end = pattern.end;
+  // Box in navigation box
+  this.nav_x1 = map(this.start, 0, trackDuration,
     navigationBox.x1+navBoxCursorW/2, navigationBox.x2-navBoxCursorW/2);
-  this.nav_x2 = map(pattern.end, 0, trackDuration,
+  this.nav_x2 = map(this.end, 0, trackDuration,
     navigationBox.x1+navBoxCursorW/2, navigationBox.x2-navBoxCursorW/2);
   this.nav_h = (navigationBoxH - 10) / total;
   this.nav_y1 = navigationBox.y1 + 5 + this.nav_h * i;
   this.nav_w = this.nav_x2 - this.nav_x1;
+  // Box in line box
+  this.lineIndex = 0;
+  while (this.end < lyricsBoxes[this.lineIndex].start ||
+    this.start > lyricsBoxes[this.lineIndex].end) {
+    this.lineIndex += 1;
+    if (this.lineIndex == lyricsBoxes.length) {
+      this.lineIndex = undefined;
+      break;
+    }
+  }
+  if (this.lineIndex != undefined) {
+    this.lineStart = lyricsBoxes[this.lineIndex].start;
+    this.lineEnd = lyricsBoxes[this.lineIndex].end;
+    if (this.start < this.lineStart) {
+      this.line_x1 = lineBox.x;
+    } else {
+      this.line_x1 = map(this.start, this.lineStart, this.lineEnd,
+                         0, lineBox.x+lineBox.w,);
+    }
+    if (this.end > this.lineEnd) {
+      this.line_x2 = lineBox.x + lineBox.w;
+    } else {
+      this.line_x2 = map(this.end, this.lineStart, this.lineEnd,
+                         0, lineBox.x+lineBox.w,);
+    }
+    this.line_w = this.line_x2 - this.line_x1;
+  }
 
   this.update = function() {}
 
@@ -440,6 +502,9 @@ function CreatePatternBox(pattern, patternLabel, i, total) {
     strokeWeight(1);
     fill(color('rgba(' + colors[i] + ', 0.5)'));
     rect(this.nav_x1, this.nav_y1, this.nav_w, this.nav_h);
+    if (this.lineIndex != undefined && this.lineIndex == currentLine) {
+      rect(this.line_x1, lineBox.y, this.line_w, lineBox.h);
+    }
   }
 }
 
