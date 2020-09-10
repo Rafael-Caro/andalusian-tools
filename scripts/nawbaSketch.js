@@ -521,6 +521,12 @@ function CreatePatternBox(pattern, patternLabel, i, total) {
     rect(this.nav_x1, this.nav_y1, this.nav_w, this.nav_h);
     if (this.lineIndex != undefined && this.lineIndex == currentLine) {
       rect(this.line_x1, lineBox.y1, this.line_w, lineBox.h);
+      textSize(15);
+      textAlign(LEFT, TOP);
+      textSize(NORMAL);
+      noStroke();
+      fill(0);
+      text(patternLabel[1], this.line_x1+5, lineBox.y1+5, this.line_w, lineBox.h);
     }
   }
 }
