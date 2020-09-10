@@ -117,6 +117,10 @@ function setup() {
     .parent("sketch-holder")
     .attribute("disabled", "true");
 
+  // var cb = createCheckbox('', true)
+  //   .position(10, 10)
+  //   .parent("sketch-holder");
+
   // Visualizations
   navigationBox = new CreateNavigationBox();
   navBoxCursor = new CreateNavBoxCursor();
@@ -376,10 +380,16 @@ function CreateLyricsBox(lyric, i) {
 
 function CreatePatternLabelBox(patternLabel, i) {
   this.i = i;
-  this.x = 20;
-  this.y = patternLabelBoxes_y + (patternLabelH * i);
+  this.x1 = 20;
+  this.x2 = 40;
+  this.y2 = patternLabelBoxes_y + (patternLabelH * i);
+  this.y1 = this.y2 + 5;
   this.patternBoxes = [];
   this.sounding = 0;
+  this.checkBox = createCheckbox('', true)
+    .position(this.x1, this.y1)
+    .parent('sketch-holder')
+    .changed(function() {print(this.checked())});
 
   this.update = function() {
     var sounding = 0;
@@ -393,15 +403,6 @@ function CreatePatternLabelBox(patternLabel, i) {
   }
 
   this.display = function() {
-    // if (this.sounding > 0) {
-    //   textStyle(BOLD);
-    //   stroke(color('rgb(' + colors[this.i] + ')'));
-    //   strokeWeight(2);
-    // } else {
-    //   textStyle(NORMAL);
-    //   noStroke();
-    // }
-    // textSize(lyricLineH * 0.60);
     if (this.sounding > 0) {
       textSize(lyricLineH * 1.2);
     } else {
@@ -412,10 +413,12 @@ function CreatePatternLabelBox(patternLabel, i) {
     stroke(color('rgb(' + colors[this.i] + ')'));
     strokeWeight(2);
     fill(0);
-    text(patternLabel, this.x, this.y, patternLabelBoxes_w, patternLabelH);
-    for (var i = 0; i < this.patternBoxes.length; i++) {
-      this.patternBoxes[i].update();
-      this.patternBoxes[i].display();
+    text(patternLabel, this.x2, this.y2, patternLabelBoxes_w, patternLabelH);
+    if (this.checkBox.checked()) {
+      for (var i = 0; i < this.patternBoxes.length; i++) {
+        this.patternBoxes[i].update();
+        this.patternBoxes[i].display();
+      }
     }
   }
 }
