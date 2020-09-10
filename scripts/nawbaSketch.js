@@ -118,10 +118,6 @@ function setup() {
     .parent("sketch-holder")
     .attribute("disabled", "true");
 
-  // var cb = createCheckbox('', true)
-  //   .position(10, 10)
-  //   .parent("sketch-holder");
-
   // Visualizations
   navigationBox = new CreateNavigationBox();
   navBoxCursor = new CreateNavBoxCursor();
@@ -164,13 +160,16 @@ function draw() {
   }
 
   navigationBox.displayBack();
-  navBoxCursor.update();
+  navBoxCursor.updateNav();
   lineBox.displayBack();
 
+  currentLine = undefined;
   for (var i = 0; i < lyricsBoxes.length; i++) {
     lyricsBoxes[i].update();
     lyricsBoxes[i].display();
   }
+
+  navBoxCursor.updateLine();
 
   for (var i = 0; i < patternLabelBoxes.length; i++) {
     patternLabelBoxes[i].update();
@@ -280,15 +279,9 @@ function CreateNavBoxCursor() {
   this.line_x;
   this.lineWeight = navBoxCursorW * 2;
 
-  this.update = function() {
+  this.updateNav = function() {
     this.nav_x = map(currentTime, 0, trackDuration,
       navigationBox.x1+navBoxCursorW/2, navigationBox.x2-navBoxCursorW/2);
-    if (currentLine != undefined) {
-      var lineStart = lyricsBoxes[currentLine].start;
-      var lineEnd = lyricsBoxes[currentLine].end;
-      this.line_x = map(currentTime, lineStart, lineEnd, lineBox.x1,
-                        lineBox.x2);
-    }
     if (navigationBox.x2 - navBoxCursorW/2 - this.x < 0.1) {
       track.stop();
       playing = false;
@@ -297,14 +290,27 @@ function CreateNavBoxCursor() {
     }
   }
 
+  this.updateLine = function() {
+    if (currentLine != undefined) {
+      var lineStart = lyricsBoxes[currentLine].start;
+      var lineEnd = lyricsBoxes[currentLine].end;
+      this.line_x = map(currentTime, lineStart, lineEnd, lineBox.x1,
+                        lineBox.x2);
+    }
+  }
+
   this.display = function() {
     stroke(0);
+    // Cursor in navigation box
     strokeWeight(navBoxCursorW);
     line(this.nav_x, navigationBox.y1, this.nav_x,
       navigationBox.y2-navBoxCursorW/2);
-    strokeWeight(this.lineWeight);
-    line(this.line_x, lineBox.y1+this.lineWeight/2,
-         this.line_x, lineBox.y2-this.lineWeight/2);
+    // Cursor in line box
+    if (currentLine != undefined) {
+      strokeWeight(this.lineWeight);
+      line(this.line_x, lineBox.y1+this.lineWeight/2,
+           this.line_x, lineBox.y2-this.lineWeight/2);
+    }
   }
 }
 
