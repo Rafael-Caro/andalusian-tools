@@ -468,8 +468,8 @@ function CreatePatternBox(pattern, patternLabel, i, total) {
   this.nav_w = this.nav_x2 - this.nav_x1;
   // Box in line box
   this.lineIndex = 0;
-  while (this.end < lyricsBoxes[this.lineIndex].start ||
-    this.start > lyricsBoxes[this.lineIndex].end) {
+  while (this.end <= lyricsBoxes[this.lineIndex].start ||
+    this.start >= lyricsBoxes[this.lineIndex].end) {
     this.lineIndex += 1;
     if (this.lineIndex == lyricsBoxes.length) {
       this.lineIndex = undefined;
@@ -483,13 +483,13 @@ function CreatePatternBox(pattern, patternLabel, i, total) {
       this.line_x1 = lineBox.x;
     } else {
       this.line_x1 = map(this.start, this.lineStart, this.lineEnd,
-                         0, lineBox.x+lineBox.w,);
+                         lineBox.x, lineBox.x+lineBox.w,);
     }
     if (this.end > this.lineEnd) {
       this.line_x2 = lineBox.x + lineBox.w;
     } else {
       this.line_x2 = map(this.end, this.lineStart, this.lineEnd,
-                         0, lineBox.x+lineBox.w,);
+                         lineBox.x, lineBox.x+lineBox.w,);
     }
     this.line_w = this.line_x2 - this.line_x1;
   }
