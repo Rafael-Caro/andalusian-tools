@@ -164,10 +164,8 @@ function draw() {
   }
 
   navigationBox.displayBack();
-
   navBoxCursor.update();
-
-  lineBox.display();
+  lineBox.displayBack();
 
   for (var i = 0; i < lyricsBoxes.length; i++) {
     lyricsBoxes[i].update();
@@ -181,6 +179,7 @@ function draw() {
 
   navBoxCursor.display();
   navigationBox.displayFront();
+  lineBox.displayFront();
 }
 
 function start() {
@@ -287,8 +286,8 @@ function CreateNavBoxCursor() {
     if (currentLine != undefined) {
       var lineStart = lyricsBoxes[currentLine].start;
       var lineEnd = lyricsBoxes[currentLine].end;
-      this.line_x = map(currentTime, lineStart, lineEnd, lineBox.x,
-                        lineBox.x+lineBox.w);
+      this.line_x = map(currentTime, lineStart, lineEnd, lineBox.x1,
+                        lineBox.x2);
     }
     if (navigationBox.x2 - navBoxCursorW/2 - this.x < 0.1) {
       track.stop();
@@ -304,21 +303,33 @@ function CreateNavBoxCursor() {
     line(this.nav_x, navigationBox.y1, this.nav_x,
       navigationBox.y2-navBoxCursorW/2);
     strokeWeight(this.lineWeight);
-    line(this.line_x, lineBox.y+this.lineWeight/2,
-         this.line_x, lineBox.y+lineBox.h-this.lineWeight/2);
+    line(this.line_x, lineBox.y1+this.lineWeight/2,
+         this.line_x, lineBox.y2-this.lineWeight/2);
   }
 }
 
 function CreateLineBox() {
-  this.x = 10;
-  this.y = lyricsDisplay_y + lyricsDisplayH + 10;
+  this.x1 = 10;
+  this.y1 = lyricsDisplay_y + lyricsDisplayH + 10;
   this.w = width - 20;
-  this.h = navigationBox.y1 - this.y - 10;
+  this.h = navigationBox.y1 - this.y1 - 10;
+  this.x2 = this.x1 + this.w;
+  this.y2 = this.y1 + this.h;
 
-  this.display = function() {
+  this.displayBack = function() {
     noStroke();
     fill(255);
-    rect(this.x, this.y, this.w, this.h);
+    rect(this.x1, this.y1, this.w, this.h);
+  }
+
+  this.displayFront = function() {
+    stroke(0);
+    strokeWeight(1);
+    line(this.x1, this.y1, this.x2, this.y1);
+    line(this.x2, this.y1, this.x2, this.y2);
+    strokeWeight(2);
+    line(this.x1, this.y2, this.x2, this.y2);
+    line(this.x1, this.y1+1, this.x1, this.y2);
   }
 }
 
@@ -480,16 +491,16 @@ function CreatePatternBox(pattern, patternLabel, i, total) {
     this.lineStart = lyricsBoxes[this.lineIndex].start;
     this.lineEnd = lyricsBoxes[this.lineIndex].end;
     if (this.start < this.lineStart) {
-      this.line_x1 = lineBox.x;
+      this.line_x1 = lineBox.x1;
     } else {
       this.line_x1 = map(this.start, this.lineStart, this.lineEnd,
-                         lineBox.x, lineBox.x+lineBox.w,);
+                         lineBox.x1, lineBox.x2,);
     }
     if (this.end > this.lineEnd) {
-      this.line_x2 = lineBox.x + lineBox.w;
+      this.line_x2 = lineBox.x2;
     } else {
       this.line_x2 = map(this.end, this.lineStart, this.lineEnd,
-                         lineBox.x, lineBox.x+lineBox.w,);
+                         lineBox.x1, lineBox.x2,);
     }
     this.line_w = this.line_x2 - this.line_x1;
   }
@@ -503,7 +514,7 @@ function CreatePatternBox(pattern, patternLabel, i, total) {
     fill(color('rgba(' + colors[i] + ', 0.5)'));
     rect(this.nav_x1, this.nav_y1, this.nav_w, this.nav_h);
     if (this.lineIndex != undefined && this.lineIndex == currentLine) {
-      rect(this.line_x1, lineBox.y, this.line_w, lineBox.h);
+      rect(this.line_x1, lineBox.y1, this.line_w, lineBox.h);
     }
   }
 }
