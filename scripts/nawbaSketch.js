@@ -58,10 +58,10 @@ var labels = {
 
 function preload () {
   language = document.documentElement.lang;
-  if (language == 'en') {
+  if (language == 'es') {
     recordingsInfo = loadJSON("files/recordingsInfo.json");
     tubu = loadJSON("files/tubu.json");
-  } else if (language == 'es') {
+  } else if (language == 'en') {
     recordingsInfo = loadJSON("../files/recordingsInfo.json");
     tubu = loadJSON("../files/tubu.json");
   }
