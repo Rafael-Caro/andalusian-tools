@@ -23,6 +23,9 @@ var patternLabelBoxes = [];
 var patternLabelBoxes_y = 100;
 var patternLabelBoxes_w = 80;
 var patternLabelH = 30;
+var colors = ['255, 0, 0', '0, 128, 0', '255, 255, 0',
+              '255, 0, 255', '0, 0, 255', '0, 255, 255',
+              '255, 165, 0', '128, 0, 128', '0, 255, 0'];
 // Audio
 var mbid;
 var track;
@@ -214,13 +217,13 @@ function start() {
   // Patterns
   var patterns = recording.patterns;
   var patternLabels = Object.keys(patterns).sort();
-  // for (var i = 0; i < patternLabels.length; i++) {
-  for (var i = 0; i < 1; i++) {
+  for (var i = 0; i < patternLabels.length; i++) {
+  // for (var i = 0; i < 1; i++) {
     var patternLabel = patternLabels[i];
     var patternLabelBox = new CreatePatternLabelBox(patternLabel, i);
     for (var j = 0; j < patterns[patternLabel].length; j++) {
       var pattern = patterns[patternLabel][j];
-      var patternBox = new CreatePatternBox(pattern, patternLabel, i);
+      var patternBox = new CreatePatternBox(pattern, patternLabel, i, patternLabels.length);
       patternLabelBox.patternBoxes.push(patternBox);
     }
     patternLabelBoxes.push(patternLabelBox);
@@ -318,7 +321,7 @@ function CreateLyricsBox(lyric, i) {
 
   this.update = function() {
     // Check if the cursor is within a lyrics navigation box
-    if (navBoxCursor.x >= this.nav_x1 && navBoxCursor.x < this.nav_x2) {
+    if (navBoxCursor.x > this.nav_x1 && navBoxCursor.x < this.nav_x2) {
       this.nav_fill = color(0, 150);
       this.nav_stroke = color(0, 150);
       this.lfill = color(0, 40);
@@ -372,6 +375,7 @@ function CreateLyricsBox(lyric, i) {
 }
 
 function CreatePatternLabelBox(patternLabel, i) {
+  this.i = i;
   this.x = 20;
   this.y = patternLabelBoxes_y + (patternLabelH * i);
   this.patternBoxes = [];
@@ -379,8 +383,8 @@ function CreatePatternLabelBox(patternLabel, i) {
 
   this.update = function() {
     var sounding = 0;
-    for (var i = 0; i < this.patternBoxes.length; i++) {
-      patternBox = this.patternBoxes[i];
+    for (var j = 0; j < this.patternBoxes.length; j++) {
+      patternBox = this.patternBoxes[j];
       if (navBoxCursor.x >= patternBox.nav_x1 && navBoxCursor.x <= patternBox.nav_x2) {
         sounding += 1;
       }
@@ -389,15 +393,24 @@ function CreatePatternLabelBox(patternLabel, i) {
   }
 
   this.display = function() {
+    // if (this.sounding > 0) {
+    //   textStyle(BOLD);
+    //   stroke(color('rgb(' + colors[this.i] + ')'));
+    //   strokeWeight(2);
+    // } else {
+    //   textStyle(NORMAL);
+    //   noStroke();
+    // }
+    // textSize(lyricLineH * 0.60);
     if (this.sounding > 0) {
-      print('yes');
-      textStyle(BOLD);
-      stroke('red');
+      textSize(lyricLineH * 1.2);
     } else {
-      textStyle(NORMAL);
-      noStroke();
+      textSize(lyricLineH * 0.60);
     }
-    textSize(lyricLineH * 0.60);
+    textAlign(LEFT, CENTER);
+    textStyle(BOLD);
+    stroke(color('rgb(' + colors[this.i] + ')'));
+    strokeWeight(2);
     fill(0);
     text(patternLabel, this.x, this.y, patternLabelBoxes_w, patternLabelH);
     for (var i = 0; i < this.patternBoxes.length; i++) {
@@ -407,21 +420,22 @@ function CreatePatternLabelBox(patternLabel, i) {
   }
 }
 
-function CreatePatternBox(pattern, patternLabel, i) {
+function CreatePatternBox(pattern, patternLabel, i, total) {
+  this.total = total;
   this.nav_x1 = map(pattern.start, 0, trackDuration,
     navigationBox.x1+navBoxCursorW/2, navigationBox.x2-navBoxCursorW/2);
   this.nav_x2 = map(pattern.end, 0, trackDuration,
     navigationBox.x1+navBoxCursorW/2, navigationBox.x2-navBoxCursorW/2);
+  this.nav_h = (navigationBoxH - 10) / total;
+  this.nav_y1 = navigationBox.y1 + 5 + this.nav_h * i;
   this.nav_w = this.nav_x2 - this.nav_x1;
 
   this.update = function() {}
 
   this.display = function() {
-    // stroke(255, 0, 0);
-    // strokeWeight(1);
     noStroke();
-    fill(255, 0, 0, 100);
-    rect(this.nav_x1, navigationBox.y1, this.nav_w, navigationBoxH);
+    fill(color('rgba(' + colors[i] + ', 0.3)'));
+    rect(this.nav_x1, this.nav_y1, this.nav_w, this.nav_h);
   }
 }
 
@@ -431,9 +445,9 @@ function CreatePatternBox(pattern, patternLabel, i) {
 function audioLoader() {
   var root;
   if (language == "es") {
-    root = "../tracks/"
-  } else {
     root = "tracks/"
+  } else {
+    root = "../tracks/"
   }
   track = loadSound(root + mbid + ".mp3", function () {
     playButton.removeAttribute("disabled");
