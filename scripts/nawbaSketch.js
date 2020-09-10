@@ -368,11 +368,14 @@ function CreateLyricsBox(lyric, i) {
   this.ly1 = 5 + lyricsDisplay_y + (lyricLineH * this.index);
   this.lw = width-10 - this.lx1 + 10;
   this.lh = lyricLineH;
+  this.lx2 = this.lx1 + this.lw;
+  this.ly2 = this.ly1 + this.lh;
   this.lfill;
+  this.hidden;
 
   this.update = function() {
     // Check if the cursor is within a lyrics navigation box
-    if (navBoxCursor.nav_x > this.nav_x1 && navBoxCursor.nav_x < this.nav_x2) {
+    if (navBoxCursor.nav_x >= this.nav_x1 && navBoxCursor.nav_x <= this.nav_x2) {
       currentLine = this.index;
       this.nav_fill = color(0, 150);
       this.nav_stroke = color(0, 150);
@@ -422,6 +425,24 @@ function CreateLyricsBox(lyric, i) {
       }
       text(txt, this.lx1, this.ly1-(lyricLineH*0.2)+lyricLineShift,
         this.lw-30, this.lh);
+      this.hidden = false;
+    } else {
+      this.hidden = true;
+    }
+  }
+
+  this.clicked = function() {
+    if (mouseX > this.lx1 && mouseX < this.lx2 &&
+        mouseY > this.ly1+lyricLineShift && mouseY < this.ly2+lyricLineShift &&
+        !this.hidden) {
+      jump = this.start;
+      if (playing) {
+        track.jump(jump);
+        jump = undefined;
+      } else {
+        currentTime = jump;
+
+      }
     }
   }
 }
@@ -571,6 +592,9 @@ function player() {
 function mouseClicked () {
   if (loaded) {
     navigationBox.clicked();
+    for (var i = 0; i < lyricsBoxes.length; i++) {
+      lyricsBoxes[i].clicked();
+    }
   }
 }
 
