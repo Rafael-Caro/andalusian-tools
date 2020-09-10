@@ -20,7 +20,7 @@ var lyricsDisplayHFactor = 8
 var lyricsDisplayH = lyricLineH * lyricsDisplayHFactor + 10;
 var lyricLineShift = 0;
 var patternLabelBoxes = [];
-var patternLabelBoxes_y = 100;
+var patternLabelBoxes_y = 110;
 var patternLabelBoxes_w = 80;
 var patternLabelH = 30;
 var colors = ['255, 0, 0', '0, 128, 0', '255, 255, 0',
@@ -421,7 +421,6 @@ function CreatePatternLabelBox(patternLabel, i) {
 }
 
 function CreatePatternBox(pattern, patternLabel, i, total) {
-  this.total = total;
   this.nav_x1 = map(pattern.start, 0, trackDuration,
     navigationBox.x1+navBoxCursorW/2, navigationBox.x2-navBoxCursorW/2);
   this.nav_x2 = map(pattern.end, 0, trackDuration,
@@ -433,8 +432,10 @@ function CreatePatternBox(pattern, patternLabel, i, total) {
   this.update = function() {}
 
   this.display = function() {
-    noStroke();
-    fill(color('rgba(' + colors[i] + ', 0.3)'));
+    // noStroke();
+    stroke(0);
+    strokeWeight(1);
+    fill(color('rgba(' + colors[i] + ', 0.5)'));
     rect(this.nav_x1, this.nav_y1, this.nav_w, this.nav_h);
   }
 }
