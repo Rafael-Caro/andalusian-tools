@@ -7,6 +7,9 @@ var recordingSelector;
 var playButton;
 var languageButton;
 var scaleCheckbox;
+var fundamentalCheckbox;
+var persistentCheckbox;
+var principalCheckbox;
 // Visualizations
 var title_y = 22;
 var orchestra_y = 50;
@@ -23,7 +26,7 @@ var lyricLineShift = 0;
 var patternLabelBoxes = [];
 var patternLabelBoxes_y = 110;
 var patternLabelBoxes_w = 80;
-var patternLabelH = 30;
+var patternLabelH = 25;
 var colors = ['255, 0, 0', '0, 128, 0', '255, 255, 0',
               '255, 0, 255', '0, 0, 255', '0, 255, 255',
               '255, 165, 0', '128, 0, 128', '0, 255, 0'];
@@ -34,6 +37,9 @@ var scaleLines = [];
 var scaleDegrees = [];
 var minScale;
 var maxScale;
+var fundamentalDegree;
+var persistentDegree;
+var principalDegrees = [];
 // Audio
 var mbid;
 var track;
@@ -69,6 +75,22 @@ var labels = {
   "scale": {
     "en": "Scale",
     "es": "Escala"
+  },
+  "fundamental": {
+    "en": "Fundamental degree (FD)",
+    "es": "Grado fundamental (GF)"
+  },
+  "persistent": {
+    "en": "Persistent degree (PD)",
+    "es": "Grado persistente (GP)"
+  },
+  "principal": {
+    "en": "Principal degrees (pd)",
+    "es": "Grados principales (gp)"
+  },
+  "degrees": {
+    "en": ["FD", "PD", "pd"],
+    "es": ["GF", "GP", "gp"]
   }
 }
 
@@ -90,6 +112,11 @@ function setup() {
   canvas.parent("sketch-holder");
 
   ellipseMode(CORNER);
+
+  // Visualizations
+  navigationBox = new CreateNavigationBox();
+  navBoxCursor = new CreateNavBoxCursor();
+  lineBox = new CreateLineBox();
 
   // Interaction buttons
   recordingSelector = createSelect()
@@ -134,10 +161,20 @@ function setup() {
     .parent('sketch-holder');
   scaleCheckbox.attribute("disabled", "true");
 
-  // Visualizations
-  navigationBox = new CreateNavigationBox();
-  navBoxCursor = new CreateNavBoxCursor();
-  lineBox = new CreateLineBox();
+  fundamentalCheckbox = createCheckbox('', true)
+    .position(10, navigationBox.y1-25)
+    .parent('sketch-holder');
+  fundamentalCheckbox.attribute("disabled", "true");
+
+  persistentCheckbox = createCheckbox('', true)
+    .position(410, navigationBox.y1-25)
+    .parent('sketch-holder');
+  persistentCheckbox.attribute("disabled", "true");
+
+  principalCheckbox = createCheckbox('', true)
+    .position(210, navigationBox.y1-25)
+    .parent('sketch-holder');
+  principalCheckbox.attribute("disabled", "true");
 }
 
 function draw() {
@@ -160,10 +197,18 @@ function draw() {
 
   // Labels to check boxes
   textAlign(RIGHT, TOP);
+  textStyle(NORMAL)
   noStroke();
   textSize(12);
-  fill(150);
-  text(labels['scale'][language], scaleCheckbox.x-5, scaleCheckbox.y+2);
+  fill(0);
+  text(labels.scale[language], scaleCheckbox.x-5, scaleCheckbox.y+2);
+  textAlign(LEFT, TOP);
+  text(labels.fundamental[language], fundamentalCheckbox.x+20,
+       fundamentalCheckbox.y+3);
+ text(labels.persistent[language], persistentCheckbox.x+20,
+      persistentCheckbox.y+3);
+  text(labels.principal[language], principalCheckbox.x+20,
+       principalCheckbox.y+3);
 
   // Lyrics display box
   fill(255);
@@ -196,7 +241,47 @@ function draw() {
       textSize(12);
       fill(150);
       textStyle(NORMAL);
-      text(scaleDegrees[i], lineBox.x2+10, scaleLines[i]-6);
+      text(scaleDegrees[i], lineBox.x2+5, scaleLines[i]);
+    }
+  }
+
+  textAlign(RIGHT, CENTER);
+  fill(0);
+  textStyle(BOLD);
+
+  if (loaded && fundamentalCheckbox.checked()) {
+    stroke(0);
+    strokeWeight(3);
+    line(lineBox.x1, fundamentalDegree, lineBox.x2-2, fundamentalDegree);
+    noStroke();
+    textSize(15);
+    text(labels.degrees[language][0], lineBox.x1-5, fundamentalDegree);
+  }
+
+  textStyle(NORMAL);
+
+  if (loaded && persistentCheckbox.checked()) {
+    stroke(0);
+    strokeWeight(3);
+    line(lineBox.x1, persistentDegree, lineBox.x2-2, persistentDegree);
+    noStroke();
+    textSize(12);
+    text(labels.degrees[language][1], lineBox.x1-5, persistentDegree);
+  }
+
+  if (loaded && principalCheckbox.checked()) {
+    for (var i = 0; i < principalDegrees.length; i++) {
+      stroke(0);
+      strokeWeight(3);
+      line(lineBox.x1, principalDegrees[i], lineBox.x2-2, principalDegrees[i]);
+      noStroke();
+      textSize(12);
+      if (principalDegrees[i] == fundamentalDegree &&
+          fundamentalCheckbox.checked()) {
+        text(labels.degrees[language][2], lineBox.x1-30, principalDegrees[i]);
+      } else {
+        text(labels.degrees[language][2], lineBox.x1-5, principalDegrees[i]);
+      }
     }
   }
 
@@ -240,6 +325,9 @@ function start() {
   languageButton.removeAttribute("disabled");
   languageButton.html("عر");
   scaleCheckbox.attribute("disabled", "true");
+  fundamentalCheckbox.attribute("disabled", "true");
+  persistentCheckbox.attribute("disabled", "true");
+  principalCheckbox.attribute("disabled", "true");
   // Load new audio
   mbid = recordingSelector.value();
   audioLoader(mbid);
@@ -248,14 +336,24 @@ function start() {
   var nawba = recording.nawba;
   var tab = recording.tab.code;
   var tabInfo = tubu[tab];
-  var scale = tabInfo["scale"];
+  var scale = tabInfo.scale;
   minScale = min(Object.keys(scale));
   maxScale = max(Object.keys(scale));
   for (var i = 0; i < Object.keys(scale).length; i++) {
     var cents = Object.keys(scale)[i];
-    var line_x = map(int(cents), minScale, maxScale, lineBox.y2-10, lineBox.y1+10);
+    var line_x = map(int(cents), minScale, maxScale,
+                     lineBox.y2-10, lineBox.y1+10);
     scaleLines.push(line_x);
     scaleDegrees.push(scale[cents]);
+  }
+  fundamentalDegree = map(tabInfo.fundamental, minScale, maxScale,
+                          lineBox.y2-10, lineBox.y1+10);
+  persistentDegree = map(tabInfo.persistent, minScale, maxScale,
+                          lineBox.y2-10, lineBox.y1+10);
+  for (var i = 0; i < tabInfo.principal.length; i++) {
+    var cents = map(tabInfo.principal[i], minScale, maxScale,
+                    lineBox.y2-10, lineBox.y1+10);
+    principalDegrees.push(cents);
   }
   var mizan = recording.mizan;
   var trTitle = mizan.tr[0].toUpperCase() + mizan.tr.slice(1, mizan.tr.length) + ' ' + tab.tr;
@@ -376,10 +474,10 @@ function CreateNavBoxCursor() {
 }
 
 function CreateLineBox() {
-  this.x1 = 50;
+  this.x1 = 60;
   this.y1 = lineBox_y;
-  this.w = width - 100;
-  this.h = navigationBox.y1 - this.y1 - 50;
+  this.w = width - 90;
+  this.h = navigationBox.y1 - this.y1 - 30;
   this.x2 = this.x1 + this.w;
   this.y2 = this.y1 + this.h;
 
@@ -596,7 +694,7 @@ function CreatePatternLabelBox(patternLabel, i) {
     if (this.sounding > 0) {
       textSize(lyricLineH * 1.2);
     } else {
-      textSize(lyricLineH * 0.60);
+      textSize(lyricLineH * 0.70);
     }
     textAlign(LEFT, CENTER);
     textStyle(BOLD);
@@ -685,6 +783,9 @@ function audioLoader() {
   track = loadSound(root + mbid + ".mp3", function () {
     playButton.removeAttribute("disabled");
     scaleCheckbox.removeAttribute("disabled");
+    fundamentalCheckbox.removeAttribute("disabled");
+    persistentCheckbox.removeAttribute("disabled");
+    principalCheckbox.removeAttribute("disabled");
     loaded=true;
     currentTime = 0;
   });
