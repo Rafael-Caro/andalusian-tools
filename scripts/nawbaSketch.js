@@ -28,6 +28,10 @@ var colors = ['255, 0, 0', '0, 128, 0', '255, 255, 0',
               '255, 165, 0', '128, 0, 128', '0, 255, 0'];
 var lineBox;
 var currentLine;
+var scaleLines = [];
+var scaleDegrees = [];
+var minScale;
+var maxScale;
 // Audio
 var mbid;
 var track;
@@ -164,6 +168,14 @@ function draw() {
   navBoxCursor.updateNav();
   lineBox.displayBack();
 
+  if (loaded) {
+    for (var i = 0; i < scaleLines.length; i++) {
+      stroke(150);
+      strokeWeight(1);
+      line(lineBox.x1, scaleLines[i], lineBox.x2, scaleLines[i]);
+    }
+  }
+
   currentLine = undefined;
   for (var i = 0; i < lyricsBoxes.length; i++) {
     lyricsBoxes[i].update();
@@ -196,6 +208,8 @@ function start() {
   lyricsBoxes = [];
   lyricLineShift = 0;
   patternLabelBoxes = [];
+  scaleLines = [];
+  scaleDegrees = [];
   // Reset buttons
   playButton.html(labels.play[language]);
   playButton.attribute("disabled", "true");
@@ -207,7 +221,17 @@ function start() {
   // Load metadata
   var recording = recordingsInfo[mbid];
   var nawba = recording.nawba;
-  var tab = recording.tab;
+  var tab = recording.tab.code;
+  var tabInfo = tubu[tab];
+  var scale = tabInfo["scale"];
+  minScale = min(Object.keys(scale));
+  maxScale = max(Object.keys(scale));
+  for (var i = 0; i < Object.keys(scale).length; i++) {
+    var cents = Object.keys(scale)[i];
+    var line_x = map(int(cents), minScale-10, maxScale+10, lineBox.y2, lineBox.y1);
+    scaleLines.push(line_x);
+    scaleDegrees.push(scale[cents]);
+  }
   var mizan = recording.mizan;
   var trTitle = mizan.tr[0].toUpperCase() + mizan.tr.slice(1, mizan.tr.length) + ' ' + tab.tr;
     var arTitle = mizan.ar + ' ' + tab.ar;
@@ -327,10 +351,10 @@ function CreateNavBoxCursor() {
 }
 
 function CreateLineBox() {
-  this.x1 = 10;
-  this.y1 = lyricsDisplay_y + lyricsDisplayH + 10;
-  this.w = width - 20;
-  this.h = navigationBox.y1 - this.y1 - 10;
+  this.x1 = 50;
+  this.y1 = lyricsDisplay_y + lyricsDisplayH + 20;
+  this.w = width - 100;
+  this.h = navigationBox.y1 - this.y1 - 20;
   this.x2 = this.x1 + this.w;
   this.y2 = this.y1 + this.h;
 
@@ -348,6 +372,18 @@ function CreateLineBox() {
     strokeWeight(2);
     line(this.x1, this.y2, this.x2, this.y2);
     line(this.x1, this.y1+1, this.x1, this.y2);
+  }
+
+  this.clicked = function () {
+    if (mouseX > this.x1 && mouseX < this.x2 && mouseY > this.y1 && mouseY < this.y2) {
+      jump = map(mouseX, this.x1, this.x2, lyricsBoxes[currentLine].start, lyricsBoxes[currentLine].end);
+      if (playing) {
+        track.jump(jump);
+        jump = undefined;
+      } else {
+        currentTime = jump;
+      }
+    }
   }
 }
 
@@ -393,12 +429,12 @@ function CreateLyricsBox(lyric, i) {
       var v = pitchTrack[k];
       var x = map(i, this.start*100, this.end*100, lineBox.x1, lineBox.x2);
       var y;
-      if (v < -700) {
+      if (v < minScale) {
         y = undefined;
-      } else if (v > 1400) {
+      } else if (v > maxScale) {
         y = undefined;
       } else {
-        y = map(v, -710, 1410, lineBox.y2, lineBox.y1);
+        y = map(v, minScale-10, maxScale+10, lineBox.y2, lineBox.y1);
       }
       this.pitchTrack[round(x)] = round(y);
     }
@@ -651,6 +687,7 @@ function player() {
 function mouseClicked () {
   if (loaded) {
     navigationBox.clicked();
+    lineBox.clicked();
     for (var i = 0; i < lyricsBoxes.length; i++) {
       lyricsBoxes[i].clicked();
     }
