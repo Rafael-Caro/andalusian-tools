@@ -52,6 +52,7 @@ var trackDuration;
 var title;
 var orchestra;
 var pitchTrack;
+var beats;
 // Multilanguage
 var language;
 var textsLang;
@@ -378,6 +379,11 @@ function start() {
   } else if (language == 'en') {
     pitchTrack = loadJSON("../files/pitchTracks/" + mbid + "-pitchTrack.json");
   }
+  // Beats
+  beats = recording.beats;
+  for (var i = 0; i < lyricsBoxes.length; i++) {
+    lyricsBoxes[i].genBeats();
+  }
   // Patterns
   var patterns = recording.patterns;
   var patternLabels = Object.keys(patterns).sort();
@@ -476,7 +482,7 @@ function CreateNavBoxCursor() {
 function CreateLineBox() {
   this.x1 = 60;
   this.y1 = lineBox_y;
-  this.w = width - 90;
+  this.w = width - 95;
   this.h = navigationBox.y1 - this.y1 - 30;
   this.x2 = this.x1 + this.w;
   this.y2 = this.y1 + this.h;
@@ -545,6 +551,8 @@ function CreateLyricsBox(lyric, i) {
   this.hidden;
   // Line pitch track
   this.pitchTrack = {};
+  this.tak = [];
+  this.dum = [];
 
   this.genPitchTrack = function() {
     for (var i = this.start * 100; i <= this.end * 100; i++) {
@@ -560,6 +568,21 @@ function CreateLyricsBox(lyric, i) {
         y = map(v, minScale, maxScale, lineBox.y2-10, lineBox.y1+10);
       }
       this.pitchTrack[round(x)] = round(y);
+    }
+  }
+
+  this.genBeats = function() {
+    for (var i = 0; i < beats.tak.length; i++) {
+      if (beats.tak[i] >= this.start && beats.tak[i] <= this.end) {
+        var x = map(beats.tak[i], this.start, this.end, lineBox.x1, lineBox.x2);
+        this.tak.push(x);
+      }
+    }
+    for (var i = 0; i < beats.dum.length; i++) {
+      if (beats.dum[i] >= this.start && beats.dum[i] <= this.end) {
+        var x = map(beats.dum[i], this.start, this.end, lineBox.x1, lineBox.x2);
+        this.dum.push(x);
+      }
     }
   }
 
@@ -645,6 +668,17 @@ function CreateLyricsBox(lyric, i) {
       }
       if (openShape) {
         endShape();
+      }
+      // Beats
+      for (var i = 0; i < this.tak.length; i++) {
+        stroke(0);
+        strokeWeight(1);
+        line(this.tak[i], lineBox.y1, this.tak[i], lineBox.y2);
+      }
+      for (var i = 0; i < this.dum.length; i++) {
+        stroke(0);
+        strokeWeight(3);
+        line(this.dum[i], lineBox.y1+2, this.dum[i], lineBox.y2-2);
       }
     }
   }
