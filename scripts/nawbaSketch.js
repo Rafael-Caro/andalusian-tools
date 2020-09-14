@@ -36,9 +36,10 @@ var playing;
 var currentTime;
 var jump;
 var trackDuration;
-// Metadata
+// Metadata and annotations
 var title;
 var orchestra;
+var pitchTrack;
 // Multilanguage
 var language;
 var textsLang;
@@ -219,11 +220,21 @@ function start() {
       var lyricsBox = new CreateLyricsBox(lyrics[i], i);
       lyricsBoxes.push(lyricsBox);
   }
+  // Load pitch track
+  if (language == 'es') {
+    pitchTrack = loadJSON("files/pitchTracks/" + mbid + "-pitchTrack.json",
+                          function() {
+                            for (var i = 0; i < lyricsBoxes.length; i++) {
+                              lyricsBoxes[i].genPitchTrack();
+                            }
+                          });
+  } else if (language == 'en') {
+    pitchTrack = loadJSON("../files/pitchTracks/" + mbid + "-pitchTrack.json");
+  }
   // Patterns
   var patterns = recording.patterns;
   var patternLabels = Object.keys(patterns).sort();
   for (var i = 0; i < patternLabels.length; i++) {
-  // for (var i = 0; i < 1; i++) {
     var patternLabel = patternLabels[i];
     var patternLabelBox = new CreatePatternLabelBox(patternLabel, i);
     for (var j = 0; j < patterns[patternLabel].length; j++) {
@@ -373,6 +384,25 @@ function CreateLyricsBox(lyric, i) {
   this.ly2 = this.ly1 + this.lh;
   this.lfill;
   this.hidden;
+  // Line pitch track
+  this.pitchTrack = {};
+
+  this.genPitchTrack = function() {
+    for (var i = this.start * 100; i <= this.end * 100; i++) {
+      var k = (i/100).toFixed(2);
+      var v = pitchTrack[k];
+      var x = map(i, this.start*100, this.end*100, lineBox.x1, lineBox.x2);
+      var y;
+      if (v < -700) {
+        y = undefined;
+      } else if (v > 1400) {
+        y = undefined;
+      } else {
+        y = map(v, -710, 1410, lineBox.y2, lineBox.y1);
+      }
+      this.pitchTrack[round(x)] = round(y);
+    }
+  }
 
   this.update = function() {
     // Check if the cursor is within a lyrics navigation box
@@ -384,7 +414,7 @@ function CreateLyricsBox(lyric, i) {
       if (this.ly1 + lyricLineShift >= lyricsDisplay_y+lyricsDisplayH-5) {
         lyricLineShift = lyricsDisplay_y+lyricsDisplayH-this.ly1-lyricLineH-5;
       } else if (this.ly1+lyricLineShift <= lyricsDisplay_y) {
-        lyricLineShift = lyricsDisplay_y - this.ly1 + 5;;
+        lyricLineShift = lyricsDisplay_y - this.ly1 + 5;
       }
     } else {
       this.nav_fill = this.nav_def_fill;
@@ -429,6 +459,16 @@ function CreateLyricsBox(lyric, i) {
       this.hidden = false;
     } else {
       this.hidden = true;
+    }
+    // Pitch track
+    if (this.index == currentLine) {
+      for (var i = 0; i < Object.keys(this.pitchTrack).length; i++) {
+        var x = Object.keys(this.pitchTrack)[i];
+        var y = this.pitchTrack[x];
+        stroke(0);
+        strokeWeight(5);
+        point(x, y);
+      }
     }
   }
 
