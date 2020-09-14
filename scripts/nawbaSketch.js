@@ -10,12 +10,12 @@ var languageButton;
 var title_y = 22;
 var orchestra_y = 50;
 var navigationBox;
-var navigationBoxH = 70;
+var navigationBoxH = 50;
 var navBoxCursor;
 var navBoxCursorW = 3;
 var lyricsDisplay_y = orchestra_y + 30
 var lyricsBoxes = [];
-var lyricLineH = 25;
+var lyricLineH = 20;
 var lyricsDisplayHFactor = 8
 var lyricsDisplayH = lyricLineH * lyricsDisplayHFactor + 10;
 var lyricLineShift = 0;
@@ -173,6 +173,12 @@ function draw() {
       stroke(150);
       strokeWeight(1);
       line(lineBox.x1, scaleLines[i], lineBox.x2, scaleLines[i]);
+      textAlign(LEFT, CENTER);
+      noStroke();
+      textSize(12);
+      fill(150);
+      textStyle(NORMAL);
+      text(scaleDegrees[i], lineBox.x2+10, scaleLines[i]-6, 50, 12);
     }
   }
 
@@ -228,7 +234,7 @@ function start() {
   maxScale = max(Object.keys(scale));
   for (var i = 0; i < Object.keys(scale).length; i++) {
     var cents = Object.keys(scale)[i];
-    var line_x = map(int(cents), minScale-10, maxScale+10, lineBox.y2, lineBox.y1);
+    var line_x = map(int(cents), minScale, maxScale, lineBox.y2-10, lineBox.y1+10);
     scaleLines.push(line_x);
     scaleDegrees.push(scale[cents]);
   }
@@ -352,9 +358,9 @@ function CreateNavBoxCursor() {
 
 function CreateLineBox() {
   this.x1 = 50;
-  this.y1 = lyricsDisplay_y + lyricsDisplayH + 20;
+  this.y1 = lyricsDisplay_y + lyricsDisplayH + 50;
   this.w = width - 100;
-  this.h = navigationBox.y1 - this.y1 - 20;
+  this.h = navigationBox.y1 - this.y1 - 50;
   this.x2 = this.x1 + this.w;
   this.y2 = this.y1 + this.h;
 
@@ -434,7 +440,7 @@ function CreateLyricsBox(lyric, i) {
       } else if (v > maxScale) {
         y = undefined;
       } else {
-        y = map(v, minScale-10, maxScale+10, lineBox.y2, lineBox.y1);
+        y = map(v, minScale, maxScale, lineBox.y2-10, lineBox.y1+10);
       }
       this.pitchTrack[round(x)] = round(y);
     }
@@ -479,7 +485,7 @@ function CreateLyricsBox(lyric, i) {
         textAlign(LEFT, BOTTOM);
       }
       textStyle(BOLD);
-      textSize(lyricLineH * 0.60);
+      textSize(lyricLineH * 0.70);
       fill(0);
       var txt = lyric.lyrics[textsLang];
       if (!this.mainLine) {
