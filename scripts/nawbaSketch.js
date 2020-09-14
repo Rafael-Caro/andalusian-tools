@@ -6,6 +6,7 @@ var vDiv1 = 200;
 var recordingSelector;
 var playButton;
 var languageButton;
+var scaleCheckbox;
 // Visualizations
 var title_y = 22;
 var orchestra_y = 50;
@@ -27,6 +28,7 @@ var colors = ['255, 0, 0', '0, 128, 0', '255, 255, 0',
               '255, 0, 255', '0, 0, 255', '0, 255, 255',
               '255, 165, 0', '128, 0, 128', '0, 255, 0'];
 var lineBox;
+var lineBox_y = lyricsDisplay_y + lyricsDisplayH + 30;
 var currentLine;
 var scaleLines = [];
 var scaleDegrees = [];
@@ -63,6 +65,10 @@ var labels = {
   "select": {
     "en": "Select",
     "es": "Elige"
+  },
+  "scale": {
+    "en": "Show scale",
+    "es": "Muestra la escala"
   }
 }
 
@@ -123,6 +129,11 @@ function setup() {
     .parent("sketch-holder")
     .attribute("disabled", "true");
 
+  scaleCheckbox = createCheckbox('', true)
+    .position(width-25, lineBox_y-20)
+    .parent('sketch-holder');
+  scaleCheckbox.attribute("disabled", "true");
+
   // Visualizations
   navigationBox = new CreateNavigationBox();
   navBoxCursor = new CreateNavBoxCursor();
@@ -147,6 +158,13 @@ function draw() {
     text(orchestra[textsLang], (width-vDiv1-20)/2+vDiv1, orchestra_y);
   }
 
+  // Labels to check boxes
+  textAlign(RIGHT, TOP);
+  noStroke();
+  textSize(12);
+  fill(150);
+  text(labels['scale'][language], scaleCheckbox.x-5, scaleCheckbox.y+2);
+
   // Lyrics display box
   fill(255);
   noStroke();
@@ -168,7 +186,7 @@ function draw() {
   navBoxCursor.updateNav();
   lineBox.displayBack();
 
-  if (loaded) {
+  if (loaded && scaleCheckbox.checked()) {
     for (var i = 0; i < scaleLines.length; i++) {
       stroke(150);
       strokeWeight(1);
@@ -178,7 +196,7 @@ function draw() {
       textSize(12);
       fill(150);
       textStyle(NORMAL);
-      text(scaleDegrees[i], lineBox.x2+10, scaleLines[i]-6, 50, 12);
+      text(scaleDegrees[i], lineBox.x2+10, scaleLines[i]-6);
     }
   }
 
@@ -221,6 +239,7 @@ function start() {
   playButton.attribute("disabled", "true");
   languageButton.removeAttribute("disabled");
   languageButton.html("عر");
+  scaleCheckbox.attribute("disabled", "true");
   // Load new audio
   mbid = recordingSelector.value();
   audioLoader(mbid);
@@ -358,7 +377,7 @@ function CreateNavBoxCursor() {
 
 function CreateLineBox() {
   this.x1 = 50;
-  this.y1 = lyricsDisplay_y + lyricsDisplayH + 50;
+  this.y1 = lineBox_y;
   this.w = width - 100;
   this.h = navigationBox.y1 - this.y1 - 50;
   this.x2 = this.x1 + this.w;
@@ -665,7 +684,7 @@ function audioLoader() {
   }
   track = loadSound(root + mbid + ".mp3", function () {
     playButton.removeAttribute("disabled");
-    // visButton.removeAttribute("disabled");
+    scaleCheckbox.removeAttribute("disabled");
     loaded=true;
     currentTime = 0;
   });
