@@ -10,6 +10,7 @@ var scaleCheckbox;
 var fundamentalCheckbox;
 var persistentCheckbox;
 var principalCheckbox;
+var beatCheckbox;
 // Visualizations
 var title_y = 22;
 var orchestra_y = 50;
@@ -24,7 +25,7 @@ var lyricsDisplayHFactor = 8
 var lyricsDisplayH = lyricLineH * lyricsDisplayHFactor + 10;
 var lyricLineShift = 0;
 var patternLabelBoxes = [];
-var patternLabelBoxes_y = 110;
+var patternLabelBoxes_y = 100;
 var patternLabelBoxes_w = 80;
 var patternLabelH = 25;
 var colors = ['255, 0, 0', '0, 128, 0', '255, 255, 0',
@@ -92,6 +93,10 @@ var labels = {
   "degrees": {
     "en": ["FD", "PD", "pd"],
     "es": ["GF", "GP", "gp"]
+  },
+  "beats": {
+    "en": "Beats",
+    "es": "Pulsaciones"
   }
 }
 
@@ -176,6 +181,11 @@ function setup() {
     .position(210, navigationBox.y1-25)
     .parent('sketch-holder');
   principalCheckbox.attribute("disabled", "true");
+
+  beatCheckbox = createCheckbox('', true)
+    .position(lineBox.x1, lineBox_y-20)
+    .parent('sketch-holder');
+  beatCheckbox.attribute("disabled", "true");
 }
 
 function draw() {
@@ -202,7 +212,7 @@ function draw() {
   noStroke();
   textSize(12);
   fill(0);
-  text(labels.scale[language], scaleCheckbox.x-5, scaleCheckbox.y+2);
+  text(labels.scale[language], scaleCheckbox.x-5, scaleCheckbox.y+3);
   textAlign(LEFT, TOP);
   text(labels.fundamental[language], fundamentalCheckbox.x+20,
        fundamentalCheckbox.y+3);
@@ -210,6 +220,7 @@ function draw() {
       persistentCheckbox.y+3);
   text(labels.principal[language], principalCheckbox.x+20,
        principalCheckbox.y+3);
+  text(labels.beats[language], beatCheckbox.x+20, beatCheckbox.y+3);
 
   // Lyrics display box
   fill(255);
@@ -329,6 +340,7 @@ function start() {
   fundamentalCheckbox.attribute("disabled", "true");
   persistentCheckbox.attribute("disabled", "true");
   principalCheckbox.attribute("disabled", "true");
+  beatCheckbox.attribute("disabled", "true");
   // Load new audio
   mbid = recordingSelector.value();
   audioLoader(mbid);
@@ -670,15 +682,17 @@ function CreateLyricsBox(lyric, i) {
         endShape();
       }
       // Beats
-      for (var i = 0; i < this.tak.length; i++) {
-        stroke(0);
-        strokeWeight(1);
-        line(this.tak[i], lineBox.y1, this.tak[i], lineBox.y2);
-      }
-      for (var i = 0; i < this.dum.length; i++) {
-        stroke(0);
-        strokeWeight(3);
-        line(this.dum[i], lineBox.y1+2, this.dum[i], lineBox.y2-2);
+      if (beatCheckbox.checked()) {
+        for (var i = 0; i < this.tak.length; i++) {
+          stroke(0);
+          strokeWeight(1);
+          line(this.tak[i], lineBox.y1, this.tak[i], lineBox.y2);
+        }
+        for (var i = 0; i < this.dum.length; i++) {
+          stroke(0);
+          strokeWeight(3);
+          line(this.dum[i], lineBox.y1+2, this.dum[i], lineBox.y2-2);
+        }
       }
     }
   }
@@ -820,6 +834,7 @@ function audioLoader() {
     fundamentalCheckbox.removeAttribute("disabled");
     persistentCheckbox.removeAttribute("disabled");
     principalCheckbox.removeAttribute("disabled");
+    beatCheckbox.removeAttribute("disabled");
     loaded=true;
     currentTime = 0;
   });
