@@ -67,8 +67,8 @@ var labels = {
     "es": "Elige"
   },
   "scale": {
-    "en": "Show scale",
-    "es": "Muestra la escala"
+    "en": "Scale",
+    "es": "Escala"
   }
 }
 
