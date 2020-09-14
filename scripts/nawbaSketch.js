@@ -462,12 +462,30 @@ function CreateLyricsBox(lyric, i) {
     }
     // Pitch track
     if (this.index == currentLine) {
+      stroke(0);
+      noFill();
+      strokeWeight(2);
+      var openShape = false;
       for (var i = 0; i < Object.keys(this.pitchTrack).length; i++) {
         var x = Object.keys(this.pitchTrack)[i];
         var y = this.pitchTrack[x];
-        stroke(0);
-        strokeWeight(5);
-        point(x, y);
+        if (isNaN(y)) {
+          if (openShape) {
+            endShape();
+            openShape = false;
+          }
+        } else {
+          if (openShape) {
+            vertex(x, y);
+          } else {
+            beginShape();
+            vertex(x, y);
+            openShape = true;
+          }
+        }
+      }
+      if (openShape) {
+        endShape();
       }
     }
   }
