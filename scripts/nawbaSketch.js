@@ -692,11 +692,11 @@ function CreateLyricsBox(lyric, i) {
 
   this.update = function() {
     // Check if the cursor is within a lyrics navigation box
-    if (navBoxCursor.nav_x >= this.nav_x1 && navBoxCursor.nav_x <= this.nav_x2) {
+    if (navBoxCursor.nav_x >= this.nav_x1 && navBoxCursor.nav_x < this.nav_x2) {
       currentLine = this.index;
-      this.nav_fill = color(0, 150);
-      this.nav_stroke = color(0, 150);
-      this.lfill = color(0, 40);
+      this.nav_fill = color(128, 128, 0, 250);
+      this.nav_stroke = color(128, 128, 0, 250);
+      this.lfill = color(128, 128, 0, 100);
       if (this.ly1 + lyricLineShift >= lyricsDisplayBox_y+lyricsDisplayH-5) {
         lyricLineShift = lyricsDisplayBox_y+lyricsDisplayH-this.ly1-lyricLineH-5;
       } else if (this.ly1+lyricLineShift <= lyricsDisplayBox_y) {
