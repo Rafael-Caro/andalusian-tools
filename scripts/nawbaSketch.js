@@ -632,16 +632,18 @@ function CreateLyricsBox(lyric, i) {
   this.nav_y1 = navigationBox.y1;
   this.nav_w = this.nav_x2 - this.nav_x1;
   this.nav_h = navigationBoxH-2;
+  this.lineType;
   if (lyric.lyrics['es'][0] == '#') {
-    this.mainLine = false;
-  } else {
-    this.mainLine = true;
-  }
-  if (this.mainLine) {
-    this.nav_def_fill = color(0, 70);
-  } else {
+    this.lineType = 2;
     this.nav_def_fill = color(0, 40);
+  } else if (lyric.lyrics['es'][0] == '(') {
+    this.lineType = 3;
+    this.nav_def_fill = color(255);
+  } else {
+    this.lineType = 1;
+    this.nav_def_fill = color(0, 70);
   }
+
   this.nav_fill;
   this.nav_stroke;
   // Data for lyrics display boxes
@@ -705,7 +707,7 @@ function CreateLyricsBox(lyric, i) {
     } else {
       this.nav_fill = this.nav_def_fill;
       this.nav_stroke = color(255);
-      this.lfill = color(0, 0);
+      this.lfill = color(255, 0);
     }
 
   }
@@ -728,17 +730,20 @@ function CreateLyricsBox(lyric, i) {
       } else {
         textAlign(LEFT, BOTTOM);
       }
-      textStyle(BOLD);
       textSize(lyricLineH * 0.70);
       fill(0);
       var txt = lyric.lyrics[textsLang];
-      if (!this.mainLine) {
+      if (this.lineType == 2) {
         if (textsLang == 'ar') {
           txt = txt + '       ';
         } else {
           txt = '       ' + txt.substring(1)
         }
         textStyle(ITALIC);
+      } else if (this.lineType == 3) {
+        textStyle(NORMAL);
+      } else {
+        textStyle(BOLD);
       }
       text(txt, this.lx1, this.ly1-(lyricLineH*0.2)+lyricLineShift,
         this.lw-30, this.lh);
