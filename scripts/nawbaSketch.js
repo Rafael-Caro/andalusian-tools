@@ -20,6 +20,7 @@ var navigationBox;
 var navigationBoxH = 50;
 var navBoxCursor;
 var navBoxCursorW = 3;
+var navBoxCursorColor = 'lime';
 var lyricsBoxes = [];
 var lyricLineH = 20;
 var lyricsDisplayHFactor = 8;
@@ -521,7 +522,7 @@ function CreateNavBoxCursor() {
   }
 
   this.display = function() {
-    stroke(0);
+    stroke(color(navBoxCursorColor));
     // Cursor in navigation box
     strokeWeight(navBoxCursorW);
     line(this.nav_x, navigationBox.y1, this.nav_x,
