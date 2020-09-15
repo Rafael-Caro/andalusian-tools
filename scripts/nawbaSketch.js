@@ -21,7 +21,7 @@ var navBoxCursorW = 3;
 var lyricsDisplay_y = orchestra_y + 30
 var lyricsBoxes = [];
 var lyricLineH = 20;
-var lyricsDisplayHFactor = 8
+var lyricsDisplayHFactor = 8;
 var lyricsDisplayH = lyricLineH * lyricsDisplayHFactor + 10;
 var lyricLineShift = 0;
 var patternLabelBoxes = [];
@@ -44,6 +44,7 @@ var principalDegrees = [];
 // Audio
 var mbid;
 var track;
+var loading;
 var loaded;
 var playing;
 var currentTime;
@@ -69,6 +70,10 @@ var labels = {
   "continue": {
     "en": "Play",
     "es": "Sigue"
+  },
+  "loading": {
+    "en": "Loading...",
+    "es": "Cargando..."
   },
   "select": {
     "en": "Select",
@@ -216,7 +221,7 @@ function draw() {
   textAlign(LEFT, TOP);
   text(labels.fundamental[language], fundamentalCheckbox.x+20,
        fundamentalCheckbox.y+3);
- text(labels.persistent[language], persistentCheckbox.x+20,
+  text(labels.persistent[language], persistentCheckbox.x+20,
       persistentCheckbox.y+3);
   text(labels.principal[language], principalCheckbox.x+20,
        principalCheckbox.y+3);
@@ -243,71 +248,82 @@ function draw() {
   navBoxCursor.updateNav();
   lineBox.displayBack();
 
-  if (loaded && scaleCheckbox.checked()) {
-    for (var i = 0; i < scaleLines.length; i++) {
-      stroke(150);
-      strokeWeight(1);
-      line(lineBox.x1, scaleLines[i], lineBox.x2, scaleLines[i]);
-      textAlign(LEFT, CENTER);
-      noStroke();
-      textSize(12);
-      fill(150);
-      textStyle(NORMAL);
-      text(scaleDegrees[i], lineBox.x2+5, scaleLines[i]);
-    }
+  if (loading) {
   }
 
-  textAlign(RIGHT, CENTER);
-  fill(0);
-  textStyle(BOLD);
-
-  if (loaded && fundamentalCheckbox.checked()) {
-    stroke(0);
-    strokeWeight(3);
-    line(lineBox.x1, fundamentalDegree, lineBox.x2-2, fundamentalDegree);
-    noStroke();
-    textSize(15);
-    text(labels.degrees[language][0], lineBox.x1-5, fundamentalDegree);
-  }
-
-  textStyle(NORMAL);
-
-  if (loaded && persistentCheckbox.checked()) {
-    stroke(0);
-    strokeWeight(3);
-    line(lineBox.x1, persistentDegree, lineBox.x2-2, persistentDegree);
-    noStroke();
-    textSize(12);
-    text(labels.degrees[language][1], lineBox.x1-5, persistentDegree);
-  }
-
-  if (loaded && principalCheckbox.checked()) {
-    for (var i = 0; i < principalDegrees.length; i++) {
-      stroke(0);
-      strokeWeight(3);
-      line(lineBox.x1, principalDegrees[i], lineBox.x2-2, principalDegrees[i]);
-      noStroke();
-      textSize(12);
-      if (principalDegrees[i] == fundamentalDegree &&
-          fundamentalCheckbox.checked()) {
-        text(labels.degrees[language][2], lineBox.x1-30, principalDegrees[i]);
-      } else {
-        text(labels.degrees[language][2], lineBox.x1-5, principalDegrees[i]);
+  if (loaded) {
+    if (scaleCheckbox.checked()) {
+      for (var i = 0; i < scaleLines.length; i++) {
+        stroke(150);
+        strokeWeight(1);
+        line(lineBox.x1, scaleLines[i], lineBox.x2, scaleLines[i]);
+        textAlign(LEFT, CENTER);
+        noStroke();
+        textSize(12);
+        fill(150);
+        textStyle(NORMAL);
+        text(scaleDegrees[i], lineBox.x2+5, scaleLines[i]);
       }
     }
-  }
 
-  currentLine = undefined;
-  for (var i = 0; i < lyricsBoxes.length; i++) {
-    lyricsBoxes[i].update();
-    lyricsBoxes[i].display();
-  }
+    textAlign(RIGHT, CENTER);
+    fill(0);
+    textStyle(BOLD);
 
-  navBoxCursor.updateLine();
+    if (fundamentalCheckbox.checked()) {
+      stroke(0);
+      strokeWeight(3);
+      line(lineBox.x1, fundamentalDegree, lineBox.x2-2, fundamentalDegree);
+      noStroke();
+      textSize(15);
+      text(labels.degrees[language][0], lineBox.x1-5, fundamentalDegree);
+    }
 
-  for (var i = 0; i < patternLabelBoxes.length; i++) {
-    patternLabelBoxes[i].update();
-    patternLabelBoxes[i].display();
+    textStyle(NORMAL);
+
+    if (persistentCheckbox.checked()) {
+      stroke(0);
+      strokeWeight(3);
+      line(lineBox.x1, persistentDegree, lineBox.x2-2, persistentDegree);
+      noStroke();
+      textSize(12);
+      text(labels.degrees[language][1], lineBox.x1-5, persistentDegree);
+    }
+
+    if (principalCheckbox.checked()) {
+      for (var i = 0; i < principalDegrees.length; i++) {
+        stroke(0);
+        strokeWeight(3);
+        line(lineBox.x1, principalDegrees[i], lineBox.x2-2, principalDegrees[i]);
+        noStroke();
+        textSize(12);
+        if (principalDegrees[i] == fundamentalDegree &&
+            fundamentalCheckbox.checked()) {
+          text(labels.degrees[language][2], lineBox.x1-30, principalDegrees[i]);
+        } else {
+          text(labels.degrees[language][2], lineBox.x1-5, principalDegrees[i]);
+        }
+      }
+    }
+
+    currentLine = undefined;
+    for (var i = 0; i < lyricsBoxes.length; i++) {
+      lyricsBoxes[i].update();
+      lyricsBoxes[i].display();
+    }
+
+    navBoxCursor.updateLine();
+
+    for (var i = 0; i < patternLabelBoxes.length; i++) {
+      patternLabelBoxes[i].update();
+      patternLabelBoxes[i].display();
+    }
+  } else {
+    noStroke();
+    fill(0, 25);
+    rect(vDiv1+10, lyricsDisplay_y, width-vDiv1-20, lyricsDisplayH);
+    rect(lineBox.x1, lineBox.y1, lineBox.w, lineBox.h);
+    rect(navigationBox.x1, navigationBox.y1, navigationBox.w, navigationBoxH);
   }
 
   navBoxCursor.display();
@@ -721,10 +737,14 @@ function CreatePatternLabelBox(patternLabel, i) {
   this.y1 = this.y2 + 5;
   this.patternBoxes = [];
   this.sounding = 0;
-  this.checkBox = createCheckbox('', true)
+  this.checkBox;
+
+  this.genCheckBox = function() {
+    this.checkBox = createCheckbox('', true)
     .position(this.x1, this.y1)
     .parent('sketch-holder')
     .changed(function() {print(this.checked())});
+  }
 
   this.update = function() {
     var sounding = 0;
@@ -829,7 +849,10 @@ function audioLoader() {
     root = "../tracks/"
   }
   track = loadSound(root + mbid + ".mp3", function () {
-    playButton.removeAttribute("disabled");
+    loading = false;
+    for (var i = 0; i < patternLabelBoxes.length; i++) {
+      patternLabelBoxes[i].genCheckBox();
+    }
     scaleCheckbox.removeAttribute("disabled");
     fundamentalCheckbox.removeAttribute("disabled");
     persistentCheckbox.removeAttribute("disabled");
@@ -837,6 +860,11 @@ function audioLoader() {
     beatCheckbox.removeAttribute("disabled");
     loaded=true;
     currentTime = 0;
+    playButton.html(labels.play[language]);
+    playButton.removeAttribute("disabled");
+  }, function() {}, function() {
+    playButton.html(labels.loading[language]);
+    loading = true;
   });
 }
 
