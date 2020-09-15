@@ -1,7 +1,6 @@
 // General measurements
 var mainWidth = 1070;
 var mainHeight = 600;
-var vDiv1 = 200;
 // Html interaction
 var recordingSelector;
 var playButton;
@@ -12,13 +11,15 @@ var persistentCheckbox;
 var principalCheckbox;
 var beatCheckbox;
 // Visualizations
-var title_y = 22;
-var orchestra_y = 50;
+var title_y = 35;
+var orchestra_y = 60;
+var heading_x;
+var lyricsDisplayBox_x = 300;
+var lyricsDisplayBox_y = orchestra_y + 10;
 var navigationBox;
 var navigationBoxH = 50;
 var navBoxCursor;
 var navBoxCursorW = 3;
-var lyricsDisplay_y = orchestra_y + 30
 var lyricsBoxes = [];
 var lyricLineH = 20;
 var lyricsDisplayHFactor = 8;
@@ -32,7 +33,8 @@ var colors = ['255, 0, 0', '0, 128, 0', '255, 255, 0',
               '255, 0, 255', '0, 0, 255', '0, 255, 255',
               '255, 165, 0', '128, 0, 128', '0, 255, 0'];
 var lineBox;
-var lineBox_y = lyricsDisplay_y + lyricsDisplayH + 30;
+var lineBoxSeparation = 30;
+var centoBox;
 var currentLine;
 var scaleLines = [];
 var scaleDegrees = [];
@@ -77,6 +79,10 @@ var labels = {
   "select": {
     "en": "Select",
     "es": "Elige"
+  },
+  "centos": {
+    "en": "Centos",
+    "es": "Centones"
   },
   "scale": {
     "en": "Scale",
@@ -124,11 +130,12 @@ function setup() {
   ellipseMode(CORNER);
 
   // Visualizations
+  lyricsDisplayBox = new CreateLyricsDisplayBox();
   navigationBox = new CreateNavigationBox();
   navBoxCursor = new CreateNavBoxCursor();
   lineBox = new CreateLineBox();
 
-  // Interaction buttons
+  // Selector
   recordingSelector = createSelect()
     .size(100, 20)
     .position(10, 10)
@@ -152,22 +159,29 @@ function setup() {
     recordingSelector.option(option, mbid);
   }
 
+  // Buttons
   playButton = createButton(labels.play[language])
-    .size(100, 50)
-    .position(10, recordingSelector.position()['y']+recordingSelector.height+10)
+    .size(100, 100)
+    .position(10, recordingSelector.y + recordingSelector.height+10)
     .mousePressed(player)
     .parent("sketch-holder")
     .attribute("disabled", "true");
 
-  languageButton = createButton("عر")
-    .size(30, 30)
-    .position(width-30-10, 10)
+  languageButton = createButton("العربية")
+    .size(100, 30)
+    .position(10, playButton.y + playButton.height + 10)
     .mousePressed(languageChange)
     .parent("sketch-holder")
     .attribute("disabled", "true");
 
+  // Centos
+  centoBox = new CreateCentoBox();
+
+  heading_x = centoBox.x1 + (lyricsDisplayBox.x2 - centoBox.x1) / 2;
+
+  // Check boxes
   scaleCheckbox = createCheckbox('', true)
-    .position(width-25, lineBox_y-20)
+    .position(width-25, lineBox.y1-20)
     .parent('sketch-holder');
   scaleCheckbox.attribute("disabled", "true");
 
@@ -187,7 +201,7 @@ function setup() {
   principalCheckbox.attribute("disabled", "true");
 
   beatCheckbox = createCheckbox('', true)
-    .position(lineBox.x1, lineBox_y-20)
+    .position(lineBox.x1, lineBox.y1-20)
     .parent('sketch-holder');
   beatCheckbox.attribute("disabled", "true");
 }
@@ -197,17 +211,17 @@ function draw() {
 
   // Title and orchestra
   if (recordingSelector.value() != labels.select[language]) {
-    textAlign(CENTER, TOP);
+    textAlign(CENTER, BOTTOM);
     stroke(0);
     strokeWeight(1);
     fill(0);
     textSize(20);
     textStyle(BOLD);
-    text(title[textsLang], (width-vDiv1-20)/2+vDiv1, title_y);
+    text(title[textsLang], heading_x, title_y);
     noStroke();
     fill(0);
     textSize(18);
-    text(orchestra[textsLang], (width-vDiv1-20)/2+vDiv1, orchestra_y);
+    text(orchestra[textsLang], heading_x, orchestra_y);
   }
 
   // Labels to check boxes
@@ -226,18 +240,7 @@ function draw() {
        principalCheckbox.y+3);
   text(labels.beats[language], beatCheckbox.x+20, beatCheckbox.y+3);
 
-  // Lyrics display box
-  fill(255);
-  noStroke();
-  rect(vDiv1+10, lyricsDisplay_y, width-vDiv1-20, lyricsDisplayH);
-  stroke(0);
-  strokeWeight(1);
-  line(vDiv1+10, lyricsDisplay_y, width-10, lyricsDisplay_y);
-  line(width-10, lyricsDisplay_y, width-10, lyricsDisplay_y+lyricsDisplayH);
-  strokeWeight(2);
-  line(vDiv1+10, lyricsDisplay_y+lyricsDisplayH, width-10,
-    lyricsDisplay_y+lyricsDisplayH);
-  line(vDiv1+10, lyricsDisplay_y+1, vDiv1+10, lyricsDisplay_y+lyricsDisplayH);
+  lyricsDisplayBox.display();
 
   if (loaded && playing) {
     currentTime = track.currentTime();
@@ -246,6 +249,7 @@ function draw() {
   navigationBox.displayBack();
   navBoxCursor.updateNav();
   lineBox.displayBack();
+  centoBox.display();
 
   if (loaded) {
     if (scaleCheckbox.checked()) {
@@ -314,12 +318,6 @@ function draw() {
       patternLabelBoxes[i].update();
       patternLabelBoxes[i].display();
     }
-  } else {
-    noStroke();
-    fill(0, 25);
-    rect(vDiv1+10, lyricsDisplay_y, width-vDiv1-20, lyricsDisplayH);
-    rect(lineBox.x1, lineBox.y1, lineBox.w, lineBox.h);
-    rect(navigationBox.x1, navigationBox.y1, navigationBox.w, navigationBoxH);
   }
 
   navBoxCursor.display();
@@ -346,8 +344,8 @@ function start() {
   // Reset buttons
   playButton.html(labels.play[language]);
   playButton.attribute("disabled", "true");
-  languageButton.removeAttribute("disabled");
-  languageButton.html("عر");
+  languageButton.attribute("disabled", "true");
+  languageButton.html("العربية");
   scaleCheckbox.attribute("disabled", "true");
   fundamentalCheckbox.attribute("disabled", "true");
   persistentCheckbox.attribute("disabled", "true");
@@ -359,8 +357,8 @@ function start() {
   // Load metadata
   var recording = recordingsInfo[mbid];
   var nawba = recording.nawba;
-  var tab = recording.tab.code;
-  var tabInfo = tubu[tab];
+  var tab = recording.tab;
+  var tabInfo = tubu[tab.code];
   var scale = tabInfo.scale;
   minScale = min(Object.keys(scale));
   maxScale = max(Object.keys(scale));
@@ -426,15 +424,49 @@ function start() {
 
 
 // Visualizations
+function CreateLyricsDisplayBox() {
+  this.x1 = lyricsDisplayBox_x;
+  this.y1 = lyricsDisplayBox_y;
+  this.x2 = width-10;
+  this.w = this.x2 - this.x1;
+  this.h = lyricLineH * lyricsDisplayHFactor + 10;
+  this.y2 = this.y1 + this.h;
+  this.color;
+
+  this.display = function() {
+    if (loaded) {
+      this.color = color(255);
+    } else {
+      this.color = color(0, 25);
+    }
+    fill(this.color);
+    noStroke();
+    rect(this.x1, this.y1, this.w, this.h);
+    stroke(0);
+    strokeWeight(1);
+    line(this.x1, this.y1-1, this.x2, this.y1-1);
+    line(this.x2, this.y1-1, this.x2, this.y2);
+    strokeWeight(2);
+    line(this.x1, this.y2, this.x2, this.y2);
+    line(this.x1, this.y1, this.x1, this.y2);
+  }
+}
+
 function CreateNavigationBox() {
   this.x1 = 10;
   this.x2 = width - 10;
   this.y1 = height - navigationBoxH - 10;
   this.y2 = height - 10;
   this.w = this.x2 - this.x1
+  this.color;
 
   this.displayBack = function() {
-    fill(255);
+    if (loaded) {
+      this.color = color(255);
+    } else {
+      this.color = color(0, 25);
+    }
+    fill(this.color);
     noStroke();
     rect(this.x1, this.y1, this.w, navigationBoxH);
   }
@@ -505,15 +537,21 @@ function CreateNavBoxCursor() {
 
 function CreateLineBox() {
   this.x1 = 60;
-  this.y1 = lineBox_y;
+  this.y1 = lyricsDisplayBox.y2 + lineBoxSeparation;
   this.w = width - 95;
   this.h = navigationBox.y1 - this.y1 - 30;
   this.x2 = this.x1 + this.w;
   this.y2 = this.y1 + this.h;
+  this.color;
 
   this.displayBack = function() {
+    if (loaded) {
+      this.color = color(255);
+    } else {
+      this.color = color(0, 25);
+    }
     noStroke();
-    fill(255);
+    fill(this.color);
     rect(this.x1, this.y1, this.w, this.h);
   }
 
@@ -537,6 +575,40 @@ function CreateLineBox() {
         currentTime = jump;
       }
     }
+  }
+}
+
+function CreateCentoBox() {
+  this.x1 = playButton.x + playButton.width + 20;
+  this.y1 = lyricsDisplayBox_y;
+  this.x2 = lyricsDisplayBox_x-10;
+  this.w = this.x2 - this.x1;
+  this.h = lyricsDisplayBox.h;
+  this.y2 = this.y1 + this.h;
+  this.color;
+
+  this.display = function() {
+    if (loaded) {
+      this.color = color(255);
+    } else {
+      this.color = color(0, 25);
+    }
+    fill(this.color);
+    noStroke();
+    rect(this.x1, this.y1, this.w, this.h);
+    stroke(0);
+    strokeWeight(1);
+    line(this.x1, this.y1-1, this.x2, this.y1-1);
+    line(this.x2, this.y1-1, this.x2, this.y2);
+    strokeWeight(2);
+    line(this.x1, this.y2, this.x2, this.y2);
+    line(this.x1, this.y1, this.x1, this.y2);
+    textAlign(LEFT, BOTTOM);
+    noStroke();
+    fill(0);
+    textSize(12);
+    textStyle(BOLD);
+    text(labels.centos[language], this.x1, this.y1-5);
   }
 }
 
@@ -565,8 +637,8 @@ function CreateLyricsBox(lyric, i) {
   this.nav_fill;
   this.nav_stroke;
   // Data for lyrics display boxes
-  this.lx1 = vDiv1 + 20;
-  this.ly1 = 5 + lyricsDisplay_y + (lyricLineH * this.index);
+  this.lx1 = lyricsDisplayBox_x + 10;
+  this.ly1 = 5 + lyricsDisplayBox_y + (lyricLineH * this.index);
   this.lw = width-10 - this.lx1 + 10;
   this.lh = lyricLineH;
   this.lx2 = this.lx1 + this.lw;
@@ -617,10 +689,10 @@ function CreateLyricsBox(lyric, i) {
       this.nav_fill = color(0, 150);
       this.nav_stroke = color(0, 150);
       this.lfill = color(0, 40);
-      if (this.ly1 + lyricLineShift >= lyricsDisplay_y+lyricsDisplayH-5) {
-        lyricLineShift = lyricsDisplay_y+lyricsDisplayH-this.ly1-lyricLineH-5;
-      } else if (this.ly1+lyricLineShift <= lyricsDisplay_y) {
-        lyricLineShift = lyricsDisplay_y - this.ly1 + 5;
+      if (this.ly1 + lyricLineShift >= lyricsDisplayBox_y+lyricsDisplayH-5) {
+        lyricLineShift = lyricsDisplayBox_y+lyricsDisplayH-this.ly1-lyricLineH-5;
+      } else if (this.ly1+lyricLineShift <= lyricsDisplayBox_y) {
+        lyricLineShift = lyricsDisplayBox_y - this.ly1 + 5;
       }
     } else {
       this.nav_fill = this.nav_def_fill;
@@ -636,8 +708,8 @@ function CreateLyricsBox(lyric, i) {
     stroke(this.nav_stroke);
     strokeWeight(1);
     rect(this.nav_x1, this.nav_y1, this.nav_w, this.nav_h);
-    if (this.ly1 + lyricLineShift > lyricsDisplay_y &&
-      this.ly1 + lyricLineShift < lyricsDisplay_y + lyricsDisplayH - 5) {
+    if (this.ly1 + lyricLineShift > lyricsDisplayBox_y &&
+      this.ly1 + lyricLineShift < lyricsDisplayBox_y + lyricsDisplayH - 5) {
       // Lyrics display box
       fill(this.lfill);
       noStroke();
@@ -727,9 +799,9 @@ function CreateLyricsBox(lyric, i) {
 
 function CreatePatternLabelBox(patternLabel, i) {
   this.i = i;
-  this.x1 = 20;
-  this.x2 = 40;
-  this.y2 = patternLabelBoxes_y + (patternLabelH * i);
+  this.x1 = centoBox.x1+10;
+  this.x2 = centoBox.x2-10;
+  this.y2 = centoBox.y1 + (patternLabelH * i) + 5;
   this.y1 = this.y2 + 5;
   this.patternBoxes = [];
   this.sounding = 0;
@@ -765,7 +837,7 @@ function CreatePatternLabelBox(patternLabel, i) {
     stroke(color('rgb(' + colors[this.i] + ')'));
     strokeWeight(2);
     fill(0);
-    text(patternLabel, this.x2, this.y2, patternLabelBoxes_w, patternLabelH);
+    text(patternLabel, this.x1+20, this.y2, patternLabelBoxes_w, patternLabelH);
     if (this.checkBox.checked()) {
       for (var i = 0; i < this.patternBoxes.length; i++) {
         this.patternBoxes[i].update();
@@ -857,6 +929,7 @@ function audioLoader() {
     currentTime = 0;
     playButton.html(labels.play[language]);
     playButton.removeAttribute("disabled");
+    languageButton.removeAttribute("disabled");
   }, function() {}, function() {
     playButton.html(labels.loading[language]);
   });
@@ -894,10 +967,14 @@ function mouseClicked () {
 function languageChange () {
   if (textsLang == "ar") {
     textsLang = language;
-    languageButton.html("عر");
+    languageButton.html("العربية");
   } else {
     textsLang = "ar";
-    languageButton.html(language.toUpperCase());
+    if (language = "es") {
+      languageButton.html("Español");
+    } else if (langauge = "en") {
+      languageButton.html("English");
+    }
   }
 }
 
