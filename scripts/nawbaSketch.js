@@ -42,8 +42,12 @@ var scaleDegrees = [];
 var minScale;
 var maxScale;
 var fundamentalDegree;
+var fundamentalDegreeColor = 'rgba(255, 0, 0, 0.4)';
 var persistentDegree;
+var persistentDegreeColor = 'rgba(255, 165, 0, 0.3)';
 var principalDegrees = [];
+var principalDegreeColor = 'rgba(255, 0, 0, 0.3)';
+var beatsColor = 'rgba(0, 0, 255, 0.2)';
 // Audio
 var mbid;
 var track;
@@ -255,7 +259,7 @@ function draw() {
   if (loaded) {
     if (scaleCheckbox.checked()) {
       for (var i = 0; i < scaleLines.length; i++) {
-        stroke(150);
+        stroke(200);
         strokeWeight(1);
         line(lineBox.x1, scaleLines[i], lineBox.x2, scaleLines[i]);
         textAlign(LEFT, CENTER);
@@ -264,46 +268,6 @@ function draw() {
         fill(150);
         textStyle(NORMAL);
         text(scaleDegrees[i], lineBox.x2+5, scaleLines[i]);
-      }
-    }
-
-    textAlign(RIGHT, CENTER);
-    fill(0);
-    textStyle(BOLD);
-
-    if (fundamentalCheckbox.checked()) {
-      stroke(0);
-      strokeWeight(3);
-      line(lineBox.x1, fundamentalDegree, lineBox.x2-2, fundamentalDegree);
-      noStroke();
-      textSize(15);
-      text(labels.degrees[language][0], lineBox.x1-5, fundamentalDegree);
-    }
-
-    textStyle(NORMAL);
-
-    if (persistentCheckbox.checked()) {
-      stroke(0);
-      strokeWeight(3);
-      line(lineBox.x1, persistentDegree, lineBox.x2-2, persistentDegree);
-      noStroke();
-      textSize(12);
-      text(labels.degrees[language][1], lineBox.x1-5, persistentDegree);
-    }
-
-    if (principalCheckbox.checked()) {
-      for (var i = 0; i < principalDegrees.length; i++) {
-        stroke(0);
-        strokeWeight(3);
-        line(lineBox.x1, principalDegrees[i], lineBox.x2-2, principalDegrees[i]);
-        noStroke();
-        textSize(12);
-        if (principalDegrees[i] == fundamentalDegree &&
-            fundamentalCheckbox.checked()) {
-          text(labels.degrees[language][2], lineBox.x1-30, principalDegrees[i]);
-        } else {
-          text(labels.degrees[language][2], lineBox.x1-5, principalDegrees[i]);
-        }
       }
     }
 
@@ -318,6 +282,49 @@ function draw() {
     for (var i = 0; i < patternLabelBoxes.length; i++) {
       patternLabelBoxes[i].update();
       patternLabelBoxes[i].display();
+    }
+
+    textAlign(RIGHT, CENTER);
+
+    if (principalCheckbox.checked()) {
+      textStyle(NORMAL);
+      for (var i = 0; i < principalDegrees.length; i++) {
+        textSize(12);
+        fill(0);
+        if ((principalDegrees[i] == fundamentalDegree ||
+            principalDegrees[i] == persistentDegree) &&
+            fundamentalCheckbox.checked()) {
+          noStroke();
+          text(labels.degrees[language][2], lineBox.x1-30, principalDegrees[i]);
+        } else {
+          noStroke();
+          text(labels.degrees[language][2], lineBox.x1-5, principalDegrees[i]);
+          stroke(color(principalDegreeColor));
+          strokeWeight(3);
+          line(lineBox.x1, principalDegrees[i], lineBox.x2-2, principalDegrees[i]);
+        }
+      }
+    }
+
+    if (persistentCheckbox.checked()) {
+      stroke(color(persistentDegreeColor));
+      strokeWeight(5);
+      line(lineBox.x1, persistentDegree, lineBox.x2-2, persistentDegree);
+      noStroke();
+      textSize(12);
+      fill(0);
+      text(labels.degrees[language][1], lineBox.x1-5, persistentDegree);
+    }
+
+    if (fundamentalCheckbox.checked()) {
+      stroke(color(fundamentalDegreeColor));
+      strokeWeight(5);
+      line(lineBox.x1+3, fundamentalDegree, lineBox.x2-2, fundamentalDegree);
+      textStyle(BOLD);
+      noStroke();
+      textSize(15);
+      fill(0);
+      text(labels.degrees[language][0], lineBox.x1-5, fundamentalDegree);
     }
   }
 
@@ -768,13 +775,12 @@ function CreateLyricsBox(lyric, i) {
       }
       // Beats
       if (beatCheckbox.checked()) {
+        stroke(color(beatsColor));
         for (var i = 0; i < this.tak.length; i++) {
-          stroke(0);
           strokeWeight(1);
           line(this.tak[i], lineBox.y1, this.tak[i], lineBox.y2);
         }
         for (var i = 0; i < this.dum.length; i++) {
-          stroke(0);
           strokeWeight(3);
           line(this.dum[i], lineBox.y1+2, this.dum[i], lineBox.y2-2);
         }
