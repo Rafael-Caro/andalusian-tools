@@ -44,7 +44,6 @@ var principalDegrees = [];
 // Audio
 var mbid;
 var track;
-var loading;
 var loaded;
 var playing;
 var currentTime;
@@ -247,9 +246,6 @@ function draw() {
   navigationBox.displayBack();
   navBoxCursor.updateNav();
   lineBox.displayBack();
-
-  if (loading) {
-  }
 
   if (loaded) {
     if (scaleCheckbox.checked()) {
@@ -849,7 +845,6 @@ function audioLoader() {
     root = "../tracks/"
   }
   track = loadSound(root + mbid + ".mp3", function () {
-    loading = false;
     for (var i = 0; i < patternLabelBoxes.length; i++) {
       patternLabelBoxes[i].genCheckBox();
     }
@@ -864,7 +859,6 @@ function audioLoader() {
     playButton.removeAttribute("disabled");
   }, function() {}, function() {
     playButton.html(labels.loading[language]);
-    loading = true;
   });
 }
 
