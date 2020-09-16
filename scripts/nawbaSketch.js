@@ -743,11 +743,12 @@ function CreateLyricsBox(lyric, i) {
       var txt = lyric.lyrics[textsLang];
       if (this.lineType == 2) {
         if (textsLang == 'ar') {
+          textStyle(NORMAL);
           txt = txt + '       ';
         } else {
+          textStyle(ITALIC);
           txt = '       ' + txt.substring(1)
         }
-        textStyle(ITALIC);
       } else if (this.lineType == 3) {
         textStyle(NORMAL);
       } else {
