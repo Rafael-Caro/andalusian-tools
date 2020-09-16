@@ -90,10 +90,6 @@ li {
   margin-bottom: 1em;
 }
 
-#info-link, #sa-info-link {
-  font-family: 'Laila', serif;
-}
-
 a:link {text-decoration: none;}
 a#info-link:link, a#info-link:visited, a#sa-info-link:link, a#sa-info-link:visited {color: rgba(0, 0, 0, 0.5); font-weight: bold;}
 a#info-link:hover, a#info-link:active {color: rgb(249, 134, 50);}

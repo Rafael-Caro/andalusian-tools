@@ -5,6 +5,7 @@ var mainHeight = 600;
 var recordingSelector;
 var playButton;
 var languageButton;
+var infoLink;
 var scaleCheckbox;
 var fundamentalCheckbox;
 var persistentCheckbox;
@@ -183,6 +184,10 @@ function setup() {
   centoBox = new CreateCentoBox();
 
   heading_x = centoBox.x1 + (lyricsDisplayBox.x2 - centoBox.x1) / 2;
+
+  // Info link
+  infoLink = select("#info-link");
+  infoLink.position(width - 50, 10);
 
   // Check boxes
   scaleCheckbox = createCheckbox('', true)
@@ -364,6 +369,9 @@ function start() {
   audioLoader(mbid);
   // Load metadata
   var recording = recordingsInfo[mbid];
+  var link = recording.info;
+  infoLink.attribute("href", link)
+    .html("+info");
   var nawba = recording.nawba;
   var tab = recording.tab;
   var tabInfo = tubu[tab.code];
