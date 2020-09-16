@@ -18,16 +18,34 @@
       </a>
     </nav>
     <main>
-      <h2>Visualizador de <i>ṣanā`i`</i></h2>
+      <h2>Visualizador de <i>ṣanāʾiʿ</i></h2>
       <p></p>
       <p>Para una descripción más detallada sobre cómo usar este visualizador, mira las <a href="#instructions">instrucciones</a> debajo.</p>
       <div id="sketch-holder">
        <a id="sa-info-link" target="_blank" a:link="text-decoration: none"></a>
      </div>
-     <h3 id="instructions">Instructions</h3>
+     <h3 id="instructions">Instrucciones</h3>
      <p id="nota"><b>Nota:</b> Esta herramienta está aún en desarrollo y puede experimentar algunos problemas. Para un rendimiento óptimo, se recomienda usarla en un ordenador (el uso en tablets y teléfonos móviles puede ser demasiado lento y ocasionar problemas de sincronización) y con el navegador <a href="https://www.google.com/chrome/">Chrome</a>.</p>
      <ol>
-       <li></li>
+       <li>Para empezar a utilizar el visualizador de ṣanāʾiʿ, selecciona una grabación del menú desplegable de arriba a la izquierda. Puedes cambiar de grabación en cualquier momento. El título de la grabación y el nombre de la orquesta que la interpretan aparecerán arriba en el visualizador. De acuerdo con la uso habitual, el título de la grabación está compuesto por el mīzān y el ṭabʿ interpretados.</li>
+       <li>Una vez que la grabación está cargada, puedes reproducirla o pausarla pulsando el botón "Toca", también arriba a la izquierda.</li>
+       <li>El visualizador está divido en tres paneles. El panel superior contiene dos ventanas.
+         <ul>
+           <li>En la izquierda se puede ver la lista de los centones correspondientes al ṭabʿ interpretado que se encuentran en la grabación. Cada centón tiene un color asignado, correspondiente a los recuadros que lo indican en los paneles central e inferior. Desactivando la casilla que precede a un particular centón, este dejará de visualizarse en los paneles central e inferior, y puede volver a visualizarse en cualquier momento activando la misma casilla. Durante la reproducción de la grabación, cuando uno centón está siendo interpretado su nombre se agranda. </li>
+           <li>En la ventana derecha se pueden ver los versos de la ṣanʿa interpretada en la grabación, incluyendo repeticiones de versos, secciones cantadas sin texto, y secciones intrumentales. Cuando un verso, u otra sección, está siendo interpretado, el fondo se marcará con un color oliva. Se puede pulsar con el ratón encima de un verso, o sección, para que la reproducción salte al comienzo del mismo. Si hay más versos de lo que se pueden ver en la ventana, estos aparecerán cuando la reproducción llegue a ese punto (también se puede llegar a ellos usando el navegador del panel inferior, ver el punto 5).</li>
+         </ul>
+       </li>
+       <li>El panel central muestra diferentes características del verso o la sección que se está interpretando en ese momento (y que aperece señalado en un color oliva tanto en la ventana de la ṣanʿa como en el navegador inferior). Las características que se pueden visualizar son las siguientes.
+         <ul>
+           <li>La línea melódica, que aparece en el fondo de color negro. NOTA: Esta línea se ha obtenido mediante análisis automático. El caracter heterofónico de esta tradición musical, el número de voces e instrumentos que intervienen, y la calidad de algunas grabaciones históricas pueden producir que el resultado de esta línea melódica no sea óptimo.</li>
+           <li>La escala propia del ṭabʿ interpretado, mediante líneas grises finas horizontales. El nombre de la note correspondiente puede verse a la derecha del panel. Estas líneas pueden ocultarse deseleccionando la casilla "Escala", en la esquina superior derecha de ese panel central.</li>
+           <li>Los grados característicos del ṭabʿ interpretado. El grado fundamental se marca con una línea gruesa roja, y con el acrónimo "<b>GF</b>" a la izquierda del panel. Los grados principales se marcan con líneas rojas más finas y con el acrónimo "gp". El grado persistente se indica con una línea naranja gruesa y el acrónimo "GP". Cada una de estas líneas pueden ocultarse deseleccionando las correspondientes casillas en la parte inferior del panel.</li>
+           <li>Las pulsaciones correspondientes al mīzān interpretado, mediante líneas verticales violetas. Las líneas gruesas corresponden a un toque "dum" y las finas a un toque "tak". Estas líneas pueden ocultarse deseleccionando la casilla "Pulsaciones" en la esquina superior izquierda del panel</li>
+           <li>Finalmente, superpuestos a todo esto, pueden verse cuadros de colores correspondientes a los centones. En la esquina superior izquierda de cada cuadro puede verse el número que identifica al centón. Deseleccionando la casilla del centón correspondiente en la ventana "Centones" del panel superior, los cuadores de dicho centón se ocultarán.</li>
+         </ul>
+         Durante la reproducción de la grabación, un cursor vertical de color verde claro irá avanzando, indicando el instante correspondiente que está sonando. Pulsando con el ratón en cualquier punto de este panel central, la reproducción saltará a ese punto concreto.
+       </li>
+       <li>El panel inferior consiste en un navegador general de toda la grabación, y muestra ciertos elementos de su estructura. Los cuadros grises corresponden a versos o secciones cantadas, mientras que los espacios en blanco corresponden a secciones instrumentales. Cuando un verso o una sección está siendo interpretada, se marcará de color oliva. Los cuadros de colores corresponden a los centones. Deseleccionando un centón particular en la ventana "Centones", sus correspondientes cuadros se ocultarán también en este navegador general. Durante la reproducción de la grabación, un cursor vertical de color verde claro irá avanzando, indicando el instante correspondiente que está sonando. Pulsando con el ratón en cualquier punto de este navegador inferior, la reproducción saltará a ese punto concreto. Si se pulsa en un punto correspondiente a un verso o una sección no visible en la ventana superior derecha, dicho verso o sección aparecerá en esta ventana.</li>
      </ol>
     </main>
     <section id="credits">
