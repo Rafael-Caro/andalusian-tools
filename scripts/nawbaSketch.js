@@ -414,14 +414,17 @@ function start() {
   }
   // Load pitch track
   if (language == 'es') {
-    pitchTrack = loadJSON("files/pitchTracks/" + mbid + "-pitchTrack.json",
-                          function() {
+    pitchTrack = loadJSON("files/pitchTracks/" + mbid + "-pitchTrack.json", function() {
                             for (var i = 0; i < lyricsBoxes.length; i++) {
                               lyricsBoxes[i].genPitchTrack();
                             }
                           });
-  } else if (language == 'en') {
-    pitchTrack = loadJSON("../files/pitchTracks/" + mbid + "-pitchTrack.json");
+  } else {
+    pitchTrack = loadJSON("../files/pitchTracks/" + mbid + "-pitchTrack.json", function() {
+                            for (var i = 0; i < lyricsBoxes.length; i++) {
+                              lyricsBoxes[i].genPitchTrack();
+                            }
+                          });
   }
   // Beats
   beats = recording.beats;
@@ -997,9 +1000,9 @@ function languageChange () {
     languageButton.html("العربية");
   } else {
     textsLang = "ar";
-    if (language = "es") {
+    if (language =="es") {
       languageButton.html("Español");
-    } else if (langauge = "en") {
+    } else if (language == "en") {
       languageButton.html("English");
     }
   }
