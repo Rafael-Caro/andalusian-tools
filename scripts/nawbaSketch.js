@@ -27,6 +27,7 @@ var lyricLineH = 20;
 var lyricsDisplayHFactor = 8;
 var lyricsDisplayH = lyricLineH * lyricsDisplayHFactor + 10;
 var lyricLineShift = 0;
+var centoCheckboxes;
 var patternLabelBoxes = [];
 var patternLabelBoxes_y = 100;
 var patternLabelBoxes_w = 80;
@@ -214,6 +215,8 @@ function setup() {
     .position(lineBox.x1, lineBox.y1-20)
     .parent('sketch-holder');
   beatCheckbox.attribute("disabled", "true");
+
+  centoCheckboxes = select("#cento-checkboxes");
 }
 
 function draw() {
@@ -352,6 +355,9 @@ function start() {
   lyricsBoxes = [];
   lyricLineShift = 0;
   patternLabelBoxes = [];
+  for (var i = centoCheckboxes.elt.children.length; i > 0; i--) {
+    centoCheckboxes.elt.children[i-1].remove();
+  }
   scaleLines = [];
   scaleDegrees = [];
   // Reset buttons
@@ -831,7 +837,7 @@ function CreatePatternLabelBox(patternLabel, i) {
   this.genCheckBox = function() {
     this.checkBox = createCheckbox('', true)
     .position(this.x1, this.y1)
-    .parent('sketch-holder')
+    .parent('cento-checkboxes')
     .changed(function() {print(this.checked())});
   }
 
